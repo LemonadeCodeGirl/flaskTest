@@ -45,7 +45,7 @@ def about():
 def querySelector():
     return render_template('querySelector.html')
 
-@app.route('/query1', methods=['GET', 'POST'])
+@app.route('/query/query1', methods=['GET', 'POST'])
 def queryOne():
     form = NameForm()
     message = ""
@@ -67,12 +67,49 @@ def queryOne():
     #         message = "That actor is not in our database."
     # # return render_template('index.html', names=names, form=form, message=message)
 
-    return render_template('query1.html', messages = "", form=form)
+    return render_template('query/query1.html', messages = "", form=form)
 
+@app.route('/query/query2', methods=['GET', 'POST'])
+def queryTwo():
+    form = NameForm()
+
+    return render_template('query/query2.html', messages = "", form=form)
+
+@app.route('/query/query3', methods=['GET', 'POST'])
+def queryThree():
+    form = NameForm()
+
+    return render_template('query/query3.html', messages = "", form=form)
+
+@app.route('/query/query4', methods=['GET', 'POST'])
+def queryFour():
+    form = NameForm()
+
+    return render_template('query/query4.html', messages = "", form=form)
+
+@app.route('/query/query5', methods=['GET', 'POST'])
+def queryFive():
+    form = NameForm()
+
+    return render_template('query/query5.html', messages = "", form=form)
+
+@app.route('/query/query6', methods=['GET', 'POST'])
+def querySix():
+    form = NameForm()
+
+    return render_template('query/query6.html', messages = "", form=form)
+
+def getResults():
+    if(currentQuery == 1):
+        specialString = ""
+        sqlCommand = "select * from BQUINTERO.USCrimeAnnualReport"
+        for row in cursor.execute(sqlCommand):
+            specialString += str(row) + ", "
+    return specialString
 
 def test():
     specialString = ""
-    sqlCommand = "select location, year from BQUINTERO.USCrimeAnnualReport where location = 'El Paso, TX'"
+    sqlCommand = "select location, year from BQUINTERO.USCrimeAnnualReport"# where location = '" + thingName + "'"
     for row in cursor.execute(sqlCommand):
         specialString += str(row) + ", "
 
@@ -83,4 +120,4 @@ def test():
 def results():
     thing = request.args.get('name')
     print(thingName)
-    return render_template('results.html', number=currentQuery, results=test(), thing=thingName)
+    return render_template('results.html', number=currentQuery, results=getResults(), thing=thingName)

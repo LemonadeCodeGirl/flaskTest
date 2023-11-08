@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% from 'bootstrap5/form.html' import render_form %}
+<html>
+
+<head>
+    <title>Query 6: </title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/node/16.13.2/node.min.js"></script>
+<body>
+    <h1>Compare the crime rate growth in Chicago vs the US over time (for different crime categories)</h1>
+    
+    <p>Description Here</p>
+    
+    {{ render_form(form) }}
+</body>
+</html>
