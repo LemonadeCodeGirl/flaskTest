@@ -14,6 +14,10 @@ app.secret_key = foo
 
 import oracledb
 
+from bokeh.plotting import figure, show
+from bokeh.embed import components
+
+
 currentQuery = 1
 thingName = ""
 
@@ -99,6 +103,28 @@ def querySix():
 
     return render_template('query/query6.html', messages = "", form=form)
 
+# Create a Bokeh plot
+plot = figure()
+
+sqlCommand1 = "select * from BQUINTERO.USCrimeAnnualReport"
+sqlCommand2 = "select * from BQUINTERO.USCrimeAnnualReport"
+sqlCommand3 = "select * from BQUINTERO.USCrimeAnnualReport"
+sqlCommand4 = "select * from BQUINTERO.USCrimeAnnualReport"
+sqlCommand5 = "select * from BQUINTERO.USCrimeAnnualReport"
+sqlCommand6 = "select * from BQUINTERO.USCrimeAnnualReport"
+
+def plotGraph():
+    
+    sqlCommand = "select * from BQUINTERO.USCrimeAnnualReport"
+    for row in cursor.execute(sqlCommand):
+        thing = sqlCommand[2]
+        print(row[0])
+        plot.circle([row[0], 2, 3], [row[2], 5, 6])
+    # count = 0
+    # while(count < 10):
+    #     plot.circle([count, 2, 3], [count + 1, 5, 6])
+    #     count = count + 1
+
 def getResults():
     if(currentQuery == 1):
         specialString = ""
@@ -118,6 +144,12 @@ def test():
 
 @app.route('/results')
 def results():
+    plotGraph()
+    # Generate components for embedding
+    script, div = components(plot)
+
     thing = request.args.get('name')
-    print(thingName)
-    return render_template('results.html', number=currentQuery, results=getResults(), thing=thingName)
+
+    # plot.show()
+    # print(script)
+    return render_template('results.html', number=currentQuery, results=getResults(), thing=thingName, script=script, div=div)
