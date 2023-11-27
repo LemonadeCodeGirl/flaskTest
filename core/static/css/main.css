@@ -44,3 +44,9 @@ body {
 #allQueries{
     column-count: 3;
 }
+
+.graphDisplay{
+    display: flex;  
+    align-items: center;    
+    justify-content: center;
+}

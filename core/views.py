@@ -5,7 +5,7 @@ from flask import Flask, render_template, redirect, url_for, request, session
 from flask_bootstrap import Bootstrap5
 
 from flask_wtf import FlaskForm, CSRFProtect
-from wtforms import StringField, SubmitField, DateField, SelectField
+from wtforms import StringField, SubmitField, DateField, SelectField, IntegerField, validators
 from wtforms.validators import DataRequired, Length
 
 import secrets
@@ -13,7 +13,6 @@ foo = secrets.token_urlsafe(16)
 app.secret_key = foo
 
 import oracledb
-
 from bokeh.plotting import figure, show
 from bokeh.models import ColumnDataSource, Label, LabelSet, Range1d
 from bokeh.embed import components
@@ -32,22 +31,36 @@ bootstrap = Bootstrap5(app)
 csrf = CSRFProtect(app)
 
 class query1Form(FlaskForm): # Query: Compare the crime rate growth in Chicago vs the US over time (for different crime categories).
-    fromDate = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
-    toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
+    # fromDate = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
+    fromDate = IntegerField('From Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
+    # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
+    toDate = IntegerField('To Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
     crimeType = SelectField(u'Crime Type', choices=["HOMICIDE", "SEX OFFENSE", "ASSAULT", "ROBBERY"])
 
     submit = SubmitField('Submit')
 
-class query2Form(FlaskForm): #COME BACK TO THIS
-    fromDate = DateField('fromDate', format='%Y-%m-%d') #is this doing anything???
+class query2Form(FlaskForm): #Determine if rain is more likely to decrease crime compared to other weather conditions over a specified period of time.
+    fromDate = DateField('fromDate', format='%Y-%m') #is this doing anything???
     toDate = DateField('toDate') # FIX LATER
     crimeType = SelectField(u'Crime Type', choices=["HOMICIDE", "SEX OFFENSE", "ASSAULT", "ROBBERY"])
 
     submit = SubmitField('Submit')
 
 class query3Form(FlaskForm): #How has the change in unemployment rates in Chicago over time affected crime rates? 
-    fromDateYear = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
-    toDateYear = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+    # fromDateYear = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+    # toDateYear = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+
+    fromDateYear = IntegerField('From Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
+    # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
+    toDateYear = IntegerField('To Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
 
     fromDateMonth = SelectField(u'From Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
     toDateMonth = SelectField(u'To Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
@@ -58,16 +71,29 @@ class query3Form(FlaskForm): #How has the change in unemployment rates in Chicag
     submit = SubmitField('Submit')
 
 class query4Form(FlaskForm):
-    fromDate = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023])
-    toDate = SelectField(u'To: ', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023])
+    # fromDate = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023])
+    # toDate = SelectField(u'To: ', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023])
+    fromDate = IntegerField('From Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
+    # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
+    toDate = IntegerField('To Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
+    
     crimeRateDate = SelectField(u'Crime Rate Year', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023])
     # crimeType = SelectField(u'Crime Type', choices=["HOMICIDE", "SEX OFFENSE", "ASSAULT", "ROBBERY"])
 
     submit = SubmitField('Submit')
 
 class query5Form(FlaskForm):
-    fromDateYear = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
-    toDateYear = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+    fromDateYear = IntegerField('From Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
+    # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
+    toDateYear = IntegerField('To Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
 
     fromDateMonth = SelectField(u'From Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
     toDateMonth = SelectField(u'To Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
@@ -75,15 +101,18 @@ class query5Form(FlaskForm):
     submit = SubmitField('Submit')
 
 class query6Form(FlaskForm):
-    # Has to input the years
-    fromDateYear = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
-    toDateYear = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
-    print()
+    fromDate = IntegerField('From Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
+
+    toDate = IntegerField('To Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
+    
+    submit = SubmitField('Submit')
 
 
-# qform = query1Form()
-
-# Create a Bokeh plot
+# # Create a Bokeh plot
 plot = figure()
 
 year1 = 2002
@@ -112,7 +141,6 @@ def queryOne():
     message = ""
 
     if form.validate_on_submit():
-        print("form.toDate.data: " + form.toDate.data)
         session['query1FromDate'] = form.fromDate.data
         session['query1ToDate'] = form.toDate.data
         session['query1CrimeType'] = form.crimeType.data
@@ -190,7 +218,14 @@ def queryFive():
 
 @app.route('/query/query6', methods=['GET', 'POST'])
 def querySix():
-    form = query1Form()
+    global currentQuery
+    currentQuery = 6
+    form = query6Form()
+
+    if form.validate_on_submit(): 
+        session['query6FromYear'] = form.fromDateYear.data
+        session['query6ToYear'] = form.toDateYear.data
+        return redirect( url_for('results'))
 
     return render_template('query/query6.html', messages = "", form=form)
 
@@ -313,7 +348,7 @@ def plotGraph(): # For putting things into the bokth thingy
         fromYear = session['query4FromDate']
         toYear = session['query4ToDate']
         midYear = session['query4CrimeRateYear']
-        # print("midYear: " + str(midYear))
+        print("midYear: " + str(midYear))
 
         sqlCommand = """SELECT cp.year AS year, ROUND(cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop,7) AS rate_C
             FROM
@@ -337,7 +372,7 @@ def plotGraph(): # For putting things into the bokth thingy
             # print(row[0])
             plot.circle([row[0]], [row[1]], color = "skyblue", legend_label="Crime Rate")
             # plot.circle([row[0] + row[1] / float(12)], [row[3]], color = "red", legend_label="Covid Death Rate")
-    elif(crurentQuery == 5):
+    elif(currentQuery == 5):
         fromYear = session['query5FromYear']
         fromMonth = session['query5FromMonth']
         fromNumber = (int(fromYear) * 12) + int(fromMonth)
@@ -346,6 +381,8 @@ def plotGraph(): # For putting things into the bokth thingy
         toYear = session['query5ToYear']
         toMonth = session['query5ToMonth']
         toNumber = (int(toYear) * 12) + int(toMonth)
+
+        print(fromYear)
 
         sqlCommand = """ 
             SELECT hd.year, hd.month, hd.homicide_death_count AS homicide_death_count, cd.covid_death_count AS covid_death_count 
@@ -358,10 +395,52 @@ def plotGraph(): # For putting things into the bokth thingy
             (SELECT year AS year, month AS month, COUNT(caseCount) AS covid_death_count
             FROM BQUINTERO.ChicagoCOVIDReport
             GROUP BY year, month) cd ON hd.year = cd.year AND hd.month = cd.month
-            WHERE hd.year >= """ + fromYear + """ AND hd.year <= """ + toYear + """ AND (hd.month >= """ + fromMonth + """  AND hd.month <= """ + toMonth + """)
-            ORDER BY hd.year, hd.month
-""" # TEST THIS
-        print()
+            WHERE hd.year >= """ + str(fromYear) + """ AND hd.year <= """ + str(toYear) + """ 
+            ORDER BY hd.year, hd.month """ # TEST THIS
+
+
+        for row in cursor.execute(sqlCommand): 
+            plot.circle([row[0] + (row[1] / float(12))], [row[2]], color = "skyblue", legend_label="Homoside Death Count")
+            plot.circle([row[0] + (row[1] / float(12))], [row[3]], color = "red", legend_label="Covid Death Count")
+        
+        
+        print("Made it here lol")
+
+    elif currentQuery == 6: 
+
+        fromYear = session['query6FromYear']
+        toYear = session['query6ToYear']
+
+        sqlCommand = """SELECT cp.pd AS police_District, cp.year AS year, ROUND(cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop,7) AS rate_C, ave.aveCr AS average_Crime_Rate
+            FROM
+            (SELECT c.policeDistrict AS pd, c.year AS year, COUNT(c.caseNumber) AS cnum
+            FROM "C.NGUYEN2".ChicagoCrimeCase c
+            WHERE c.policeDistrict IN
+            (
+            WITH arrested AS (SELECT c.policeDistrict AS pd, ROUND(COUNT(c.caseNumber)/pddom.dom,5) AS arrestedDom  
+            FROM "C.NGUYEN2".ChicagoCrimeCase c JOIN (SELECT c.policeDistrict AS pd, COUNT(c.caseNumber) AS dom
+            FROM "C.NGUYEN2".ChicagoCrimeCase c
+            WHERE c.isDomestic = 'TRUE'
+            GROUP BY c.policeDistrict) pddom on pddom.pd = c.policeDistrict 
+            WHERE c.isDomestic = 'TRUE' AND c.isArrested = 'TRUE'
+            GROUP BY c.policeDistrict, pddom.dom)
+            SELECT c.policeDistrict AS pd
+            FROM "C.NGUYEN2".ChicagoCrimeCase c JOIN arrested ON c.policeDistrict = arrested.pd
+            WHERE arrested.arrestedDom > (SELECT AVG(arrestedDom) FROM arrested)
+            GROUP BY c.policeDistrict)
+            GROUP BY c.policeDistrict, c.year
+            ORDER BY c.policeDistrict) cp JOIN BQUINTERO.CHICAGOPOP ON BQUINTERO.CHICAGOPOP.year = cp.year
+            JOIN (SELECT cp.year AS year, ROUND((cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop)/22,7) AS aveCr
+            FROM
+            (SELECT c.year AS year, COUNT(c.caseNumber) AS cnum
+            FROM "C.NGUYEN2".ChicagoCrimeCase c
+            GROUP BY c.year) cp JOIN BQUINTERO.CHICAGOPOP ON BQUINTERO.CHICAGOPOP.year = cp.year) ave ON ave.year = cp.year 
+            WHERE cp.year >= """ + str(fromYear) + """ AND cp.year <= """ + str(toYear) 
+
+        for row in cursor.execute(sqlCommand): 
+            plot.circle([row[0]], [row[2]], color = "skyblue", legend_label="Homoside Death Count")
+
+
 
 
 def getResults():
