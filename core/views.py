@@ -31,19 +31,55 @@ bootstrap = Bootstrap5(app)
 # Flask-WTF requires this line
 csrf = CSRFProtect(app)
 
-class query1Form(FlaskForm):
+class query1Form(FlaskForm): # Query: Compare the crime rate growth in Chicago vs the US over time (for different crime categories).
     fromDate = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
     toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
     crimeType = SelectField(u'Crime Type', choices=["HOMICIDE", "SEX OFFENSE", "ASSAULT", "ROBBERY"])
 
     submit = SubmitField('Submit')
 
-class query2Form(FlaskForm):
-    fromDate = DateField('fromDate', format='%Y-%m-%d')
+class query2Form(FlaskForm): #COME BACK TO THIS
+    fromDate = DateField('fromDate', format='%Y-%m-%d') #is this doing anything???
     toDate = DateField('toDate') # FIX LATER
     crimeType = SelectField(u'Crime Type', choices=["HOMICIDE", "SEX OFFENSE", "ASSAULT", "ROBBERY"])
 
     submit = SubmitField('Submit')
+
+class query3Form(FlaskForm): #How has the change in unemployment rates in Chicago over time affected crime rates? 
+    fromDateYear = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+    toDateYear = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+
+    fromDateMonth = SelectField(u'From Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+    toDateMonth = SelectField(u'To Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+    # fromDate = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
+    # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
+    # crimeType = SelectField(u'Crime Type', choices=["HOMICIDE", "SEX OFFENSE", "ASSAULT", "ROBBERY"])
+
+    submit = SubmitField('Submit')
+
+class query4Form(FlaskForm):
+    fromDate = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023])
+    toDate = SelectField(u'To: ', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023])
+    crimeRateDate = SelectField(u'Crime Rate Year', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023])
+    # crimeType = SelectField(u'Crime Type', choices=["HOMICIDE", "SEX OFFENSE", "ASSAULT", "ROBBERY"])
+
+    submit = SubmitField('Submit')
+
+class query5Form(FlaskForm):
+    fromDateYear = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+    toDateYear = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+
+    fromDateMonth = SelectField(u'From Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+    toDateMonth = SelectField(u'To Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+
+    submit = SubmitField('Submit')
+
+class query6Form(FlaskForm):
+    # Has to input the years
+    fromDateYear = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+    toDateYear = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+    print()
+
 
 # qform = query1Form()
 
@@ -107,19 +143,48 @@ def queryTwo():
 
 @app.route('/query/query3', methods=['GET', 'POST'])
 def queryThree():
-    form = query1Form()
+    global currentQuery
+    currentQuery = 3
+    form = query3Form()
+
+    if form.validate_on_submit(): 
+        session['query3FromMonth'] = form.fromDateMonth.data
+        session['query3FromYear'] = form.fromDateYear.data
+        session['query3ToMonth'] = form.toDateMonth.data
+        session['query3ToYear'] = form.toDateYear.data
+        return redirect( url_for('results'))
 
     return render_template('query/query3.html', messages = "", form=form)
 
 @app.route('/query/query4', methods=['GET', 'POST'])
 def queryFour():
-    form = query1Form()
+    global currentQuery
+    currentQuery = 4
+    form = query4Form()
+
+    if form.validate_on_submit():
+        print("form.toDate.data: " + str(form.toDate.data))
+        session['query4FromDate'] = form.fromDate.data
+        session['query4ToDate'] = form.toDate.data
+        session['query4CrimeRateYear'] = form.crimeRateDate.data
+        
+        # session['query1CrimeType'] = form.crimeType.data
+        return redirect( url_for('results') )
 
     return render_template('query/query4.html', messages = "", form=form)
 
 @app.route('/query/query5', methods=['GET', 'POST'])
 def queryFive():
-    form = query1Form()
+    global currentQuery
+    currentQuery = 5
+    form = query5Form()
+
+    if form.validate_on_submit(): 
+        session['query5FromMonth'] = form.fromDateMonth.data
+        session['query5FromYear'] = form.fromDateYear.data
+        session['query5ToMonth'] = form.toDateMonth.data
+        session['query5ToYear'] = form.toDateYear.data
+        return redirect( url_for('results'))
 
     return render_template('query/query5.html', messages = "", form=form)
 
@@ -129,8 +194,9 @@ def querySix():
 
     return render_template('query/query6.html', messages = "", form=form)
 
-def plotGraph():
+def plotGraph(): # For putting things into the bokth thingy
     specialString = ""
+    plot.renderers = []
     # global year1 = 
     print(currentQuery)
     if(currentQuery == 1):
@@ -155,6 +221,7 @@ def plotGraph():
         x = []
         y1 = []
         y2 = []
+        # plot.clear() #Clear the plot???
         for row in cursor.execute(sqlCommand):
             thing = sqlCommand[2]
             # print(row[0])
@@ -164,6 +231,7 @@ def plotGraph():
             x.append([row[0]])
             y1.append([row[1]])
             y2.append([row[2]])
+
 
         plot.line(x,y1)
         plot.line(x,y2)
@@ -176,7 +244,7 @@ def plotGraph():
         year2Year = session['query2ToDateYear']
         crimeType = session['query2CrimeType']
 
-        print(str(year2Year) + "year2Year")
+        print(str(year2Year) + " year2Year")
 
         sqlCommand = """SELECT hd.year, hd.month, hd.homicide_death_count AS homicide_death_count, cd.covid_death_count AS covid_death_count 
             FROM
@@ -192,17 +260,112 @@ def plotGraph():
             ORDER BY hd.year, hd.month
 
         """
+
+        # plot.clear() #Clear the plot???
+
         for row in cursor.execute(sqlCommand):
             thing = sqlCommand[2]
             # print(row[0])
             plot.circle([row[0] + row[1] / float(12)], [row[2]], color = "skyblue", legend_label="Homoside Rate")
             plot.circle([row[0] + row[1] / float(12)], [row[3]], color = "red", legend_label="Covid Death Rate")
+    elif(currentQuery == 3):
+        # session['query3FromMonth'] = form.fromDateMonth.data
+        # session['query3FromYear'] = form.fromDateYear.data
+        # session['query3ToMonth'] = form.toDateMonth.data
+        # session['query3ToYear'] = form.toDateYear.data
+        fromYear = session['query3FromYear']
+        fromMonth = session['query3FromMonth']
+        fromNumber = (int(fromYear) * 12) + int(fromMonth)
+
         
-    
+        toYear = session['query3ToYear']
+        toMonth = session['query3ToMonth']
+        toNumber = (int(toYear) * 12) + int(toMonth)
+
+        print(str(fromNumber) + " | " + str(toNumber))
+
+        sqlCommand = """SELECT year, month, round(crime_count/pop*100000, 7) AS crime_rate, unemployment_rate
+            FROM
+            (
+                ((SELECT year as y, month, count(*) as crime_count
+                FROM "C.NGUYEN2".ChicagoCrimeCase
+                GROUP BY Year, Month
+                HAVING (year*12 + month) >= """ + str(fromNumber) + """ AND (year*12 + month) <= """ + str(toNumber) + """
+                )
+                JOIN BQUINTERO.ChicagoPOP
+                ON y = BQUINTERO.ChicagoPOP.year)
+                
+                JOIN
+                (SELECT year as y2, month as m2, rate as unemployment_rate
+                FROM BQUINTERO.ChicagoUnemploymentReport)
+                ON year = y2 AND month = m2
+            )
+            ORDER BY Year ASC, month ASC
+        """
+
+        for row in cursor.execute(sqlCommand):
+            print(str(row[0]) + " " + str(row[1]) + " " + str(row[2]) + " " + str(row[3]))
+            print(str(float(row[0] + (row[1] / 12))))
+            plot.circle(float(row[0] + (row[1] / 12)), [row[2]], color = "skyblue", legend_label="change in unemployment rates over time")
+            # plot.circle([row[0] + row[1] / float(12)], [row[3]], color = "red", legend_label="Covid Death Rate")
+        
+    elif(currentQuery == 4):
+        fromYear = session['query4FromDate']
+        toYear = session['query4ToDate']
+        midYear = session['query4CrimeRateYear']
+        # print("midYear: " + str(midYear))
+
+        sqlCommand = """SELECT cp.year AS year, ROUND(cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop,7) AS rate_C
+            FROM
+            (SELECT "C.NGUYEN2".ChicagoCrimeCase.year AS year, COUNT("C.NGUYEN2".ChicagoCrimeCase.caseNumber) AS cnum
+            FROM "C.NGUYEN2".ChicagoCrimeCase 
+            JOIN 
+            (WITH badComm AS (SELECT "C.NGUYEN2".ChicagoCrimeCase.community AS comm, COUNT("C.NGUYEN2".ChicagoCrimeCase.caseNumber) AS cnum
+            FROM "C.NGUYEN2".ChicagoCrimeCase
+            WHERE "C.NGUYEN2".ChicagoCrimeCase.year = """ + str(midYear) + """
+            GROUP BY "C.NGUYEN2".ChicagoCrimeCase.community)
+            SELECT comm AS bc, cnum AS num
+            FROM badComm
+            WHERE cnum = (SELECT MAX(cnum) FROM badComm)) b
+            ON "C.NGUYEN2".ChicagoCrimeCase.community = b.bc 
+            WHERE "C.NGUYEN2".ChicagoCrimeCase.year >= """ + str(fromYear) + """ AND "C.NGUYEN2".ChicagoCrimeCase.year <= """ + str(toYear) + """
+            GROUP BY "C.NGUYEN2".ChicagoCrimeCase.year) cp JOIN BQUINTERO.CHICAGOPOP ON BQUINTERO.CHICAGOPOP.year = cp.year
+            ORDER BY cp.year"""
+
+        for row in cursor.execute(sqlCommand):
+            # thing = sqlCommand[2]
+            # print(row[0])
+            plot.circle([row[0]], [row[1]], color = "skyblue", legend_label="Crime Rate")
+            # plot.circle([row[0] + row[1] / float(12)], [row[3]], color = "red", legend_label="Covid Death Rate")
+    elif(crurentQuery == 5):
+        fromYear = session['query5FromYear']
+        fromMonth = session['query5FromMonth']
+        fromNumber = (int(fromYear) * 12) + int(fromMonth)
+
+        
+        toYear = session['query5ToYear']
+        toMonth = session['query5ToMonth']
+        toNumber = (int(toYear) * 12) + int(toMonth)
+
+        sqlCommand = """ 
+            SELECT hd.year, hd.month, hd.homicide_death_count AS homicide_death_count, cd.covid_death_count AS covid_death_count 
+            FROM
+            (SELECT year AS year, month AS month, COUNT(caseNumber) AS homicide_death_count
+            FROM "C.NGUYEN2".ChicagoCrimeCase
+            WHERE crimeType = 'HOMICIDE'
+            GROUP BY year, month) hd
+            JOIN
+            (SELECT year AS year, month AS month, COUNT(caseCount) AS covid_death_count
+            FROM BQUINTERO.ChicagoCOVIDReport
+            GROUP BY year, month) cd ON hd.year = cd.year AND hd.month = cd.month
+            WHERE hd.year >= """ + fromYear + """ AND hd.year <= """ + toYear + """ AND (hd.month >= """ + fromMonth + """  AND hd.month <= """ + toMonth + """)
+            ORDER BY hd.year, hd.month
+""" # TEST THIS
+        print()
 
 
 def getResults():
-
+    specialString = ""
     if(currentQuery == 1):
         specialString = ""
         # global year1 = 
@@ -249,7 +412,31 @@ def getResults():
         """
         for row in cursor.execute(sqlCommand):
             specialString += str(row) + ", "
+    elif(currentQuery == 4):
+        fromYear = session['query4FromDate']
+        toYear = session['query4ToDate']
+        midYear = session['query4CrimeRateYear']
+        print("midYear: " + str(midYear))
 
+        sqlCommand = """SELECT cp.year AS year, ROUND(cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop,7) AS rate_C
+            FROM
+            (SELECT "C.NGUYEN2".ChicagoCrimeCase.year AS year, COUNT("C.NGUYEN2".ChicagoCrimeCase.caseNumber) AS cnum
+            FROM "C.NGUYEN2".ChicagoCrimeCase 
+            JOIN 
+            (WITH badComm AS (SELECT "C.NGUYEN2".ChicagoCrimeCase.community AS comm, COUNT("C.NGUYEN2".ChicagoCrimeCase.caseNumber) AS cnum
+            FROM "C.NGUYEN2".ChicagoCrimeCase
+            WHERE "C.NGUYEN2".ChicagoCrimeCase.year = """ + str(midYear) + """
+            GROUP BY "C.NGUYEN2".ChicagoCrimeCase.community)
+            SELECT comm AS bc, cnum AS num
+            FROM badComm
+            WHERE cnum = (SELECT MAX(cnum) FROM badComm)) b
+            ON "C.NGUYEN2".ChicagoCrimeCase.community = b.bc 
+            WHERE "C.NGUYEN2".ChicagoCrimeCase.year >= """ + str(fromYear) + """ AND "C.NGUYEN2".ChicagoCrimeCase.year <= """ + str(toYear) + """
+            GROUP BY "C.NGUYEN2".ChicagoCrimeCase.year) cp JOIN BQUINTERO.CHICAGOPOP ON BQUINTERO.CHICAGOPOP.year = cp.year
+            ORDER BY cp.year"""
+
+        for row in cursor.execute(sqlCommand):
+            specialString += str(row) + ", "
 
     return specialString
 
