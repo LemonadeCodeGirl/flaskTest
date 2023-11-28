@@ -102,11 +102,11 @@ class query5Form(FlaskForm):
 
 class query6Form(FlaskForm):
     fromDate = IntegerField('From Year: ',validators=[
-        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+        validators.NumberRange(min=2001, max=2023),  # Adjust min and max as needed
     ])
 
     toDate = IntegerField('To Year: ',validators=[
-        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+        validators.NumberRange(min=2001, max=2023),  # Adjust min and max as needed
     ])
     
     submit = SubmitField('Submit')
@@ -223,8 +223,8 @@ def querySix():
     form = query6Form()
 
     if form.validate_on_submit(): 
-        session['query6FromYear'] = form.fromDateYear.data
-        session['query6ToYear'] = form.toDateYear.data
+        session['query6FromYear'] = form.fromDate.data
+        session['query6ToYear'] = form.toDate.data
         return redirect( url_for('results'))
 
     return render_template('query/query6.html', messages = "", form=form)
@@ -437,9 +437,49 @@ def plotGraph(): # For putting things into the bokth thingy
             GROUP BY c.year) cp JOIN BQUINTERO.CHICAGOPOP ON BQUINTERO.CHICAGOPOP.year = cp.year) ave ON ave.year = cp.year 
             WHERE cp.year >= """ + str(fromYear) + """ AND cp.year <= """ + str(toYear) 
 
-        for row in cursor.execute(sqlCommand): 
-            plot.circle([row[0]], [row[2]], color = "skyblue", legend_label="Homoside Death Count")
+        districtCounter = 0
+        interval = toYear - fromYear
 
+        district8 = []
+        district9 = []
+        district10 = []
+        district12 = []
+        district14 = []
+        district16 = []
+        district17 = []
+        district19 = []
+        district20 = []
+        district24 = []
+        district25 = []
+
+        year = []
+
+        for row in cursor.execute(sqlCommand): 
+            
+            if row[0] == 8:
+                year.append(row[1])
+                district8.append(row[2])
+            elif row[0] == 9:
+                year.append(row[1])
+                district9.append(row[2])
+            elif row[0] == 10:
+                year.append(row[1])
+                district10.append(row[2])
+            elif row[0] == 12:
+                year.append(row[1])
+                district12.append(row[2])
+            elif row[0] == 14:
+                year.append(row[1])
+                district14.append(row[2])
+
+            print(row[0])
+            plot.circle([row[1]], [row[2]], color = "skyblue", legend_label="Homoside Death Count")
+        
+        plot.line(year, district8)
+        plot.line(year, district9)
+        plot.line(year, district10)
+        plot.line(year, district12)
+        plot.line(year, district14)
 
 
 
