@@ -44,8 +44,17 @@ class query1Form(FlaskForm): # Query: Compare the crime rate growth in Chicago v
     submit = SubmitField('Submit')
 
 class query2Form(FlaskForm): #Determine if rain is more likely to decrease crime compared to other weather conditions over a specified period of time.
-    fromDate = DateField('fromDate', format='%Y-%m') #is this doing anything???
-    toDate = DateField('toDate') # FIX LATER
+    # fromDate = DateField('fromDate', format='%Y-%m') #is this doing anything???
+    # toDate = DateField('toDate') # FIX LATER
+
+    fromDateYear = SelectField(u'From Year', choices=[2020, 2021, 2022])
+    # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
+    toDateYear = SelectField(u'To Year', choices=[2020, 2021, 2022])
+
+    fromDateMonth = SelectField(u'From Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+    toDateMonth = SelectField(u'To Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+
+
     crimeType = SelectField(u'Crime Type', choices=["HOMICIDE", "SEX OFFENSE", "ASSAULT", "ROBBERY"])
 
     submit = SubmitField('Submit')
@@ -87,13 +96,9 @@ class query4Form(FlaskForm):
     submit = SubmitField('Submit')
 
 class query5Form(FlaskForm):
-    fromDateYear = IntegerField('From Year: ',validators=[
-        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
-    ])
+    fromDateYear = SelectField(u'From Month', choices=[2020, 2021, 2022])
     # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
-    toDateYear = IntegerField('To Year: ',validators=[
-        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
-    ])
+    toDateYear = SelectField(u'From Month', choices=[2020, 2021, 2022])
 
     fromDateMonth = SelectField(u'From Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
     toDateMonth = SelectField(u'To Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
@@ -159,10 +164,10 @@ def queryTwo():
     if form.validate_on_submit():
         # print("form.toDate.data: " + form.toDate.data)
         # currentQuery = 2
-        session['query2FromDateMonth'] = form.fromDate.data.month
-        session['query2FromDateYear'] = form.fromDate.data.year
-        session['query2ToDateMonth'] = form.toDate.data.month
-        session['query2ToDateYear'] = form.toDate.data.year
+        session['query2FromDateMonth'] = form.fromDateMonth.data
+        session['query2FromDateYear'] = form.fromDateYear.data
+        session['query2ToDateMonth'] = form.toDateMonth.data
+        session['query2ToDateYear'] = form.toDateYear.data
         session['query2CrimeType'] = form.crimeType.data
         # session['query2CrimeType'] = form.crimeType.data
         return redirect( url_for('results') )
@@ -233,7 +238,7 @@ def plotGraph(): # For putting things into the bokth thingy
     specialString = ""
     plot.renderers = []
     # global year1 = 
-    print(currentQuery)
+    # print("currentQuery: " + currentQuery)
     if(currentQuery == 1):
         year1 = session['query1FromDate']
         year2 = session['query1ToDate']
@@ -402,12 +407,9 @@ def plotGraph(): # For putting things into the bokth thingy
         for row in cursor.execute(sqlCommand): 
             plot.circle([row[0] + (row[1] / float(12))], [row[2]], color = "skyblue", legend_label="Homoside Death Count")
             plot.circle([row[0] + (row[1] / float(12))], [row[3]], color = "red", legend_label="Covid Death Count")
-        
-        
-        print("Made it here lol")
 
     elif currentQuery == 6: 
-
+        print("FKLQEFLKFJKQDLKFDE")
         fromYear = session['query6FromYear']
         toYear = session['query6ToYear']
 
@@ -452,34 +454,67 @@ def plotGraph(): # For putting things into the bokth thingy
         district24 = []
         district25 = []
 
+        distAdv = []
+
         year = []
 
+        for i in range(fromYear, toYear + 1):
+            year.append(i)
+
         for row in cursor.execute(sqlCommand): 
-            
             if row[0] == 8:
-                year.append(row[1])
+                # year.append(row[1])
                 district8.append(row[2])
+                distAdv.append(row[3])
+                plot.circle([row[1]], [row[3]], color = "red")
             elif row[0] == 9:
-                year.append(row[1])
+                # year.append(row[1])
                 district9.append(row[2])
             elif row[0] == 10:
-                year.append(row[1])
+                # year.append(row[1])
                 district10.append(row[2])
             elif row[0] == 12:
-                year.append(row[1])
+                # year.append(row[1])
                 district12.append(row[2])
             elif row[0] == 14:
-                year.append(row[1])
+                # year.append(row[1])
                 district14.append(row[2])
+            elif row[0] == 16: 
+                # year.append(row[1])
+                district16.append(row[2])
+            elif row[0] == 17:
+                # year.append(row[1])
+                district17.append(row[2])
+            elif row[0] == 19:
+                # year.append(row[1])
+                district19.append(row[2])
+            elif row[0] == 20:
+                # year.append(row[1])
+                district20.append(row[2])
+            elif row[0] == 24:
+                # year.append(row[1])
+                district24.append(row[2])
+            elif row[0] == 25:
+                # year.append(row[1])
+                district25.append(row[2])
 
-            print(row[0])
-            plot.circle([row[1]], [row[2]], color = "skyblue", legend_label="Homoside Death Count")
-        
+            # print(row[0])
+            plot.circle([row[1]], [row[2]], color = "skyblue", legend_label="Crime Rate in District " + str(row[0]))
+        print("Hi there")
+        print(str(len(year)) + " " + str(len(district8)))
         plot.line(year, district8)
         plot.line(year, district9)
         plot.line(year, district10)
         plot.line(year, district12)
         plot.line(year, district14)
+        plot.line(year, district16)
+        plot.line(year, district17)
+        plot.line(year, district19)
+        plot.line(year, district20)
+        plot.line(year, district24)
+        plot.line(year, district25)
+
+        plot.line(year, distAdv, line_color = "red", legend_label= "Average Crime Rate") #Working on this
 
 
 
