@@ -14,7 +14,7 @@ app.secret_key = foo
 
 import oracledb
 from bokeh.plotting import figure, show
-from bokeh.models import ColumnDataSource, Label, LabelSet, Range1d
+from bokeh.models import ColumnDataSource, Label, Legend, LabelSet, Range1d
 from bokeh.embed import components
 
 
@@ -119,6 +119,7 @@ class query6Form(FlaskForm):
 
 # # Create a Bokeh plot
 plot = figure()
+plot.add_layout(Legend(), 'right')
 
 year1 = 2002
 year2 = 2005
@@ -235,7 +236,8 @@ def querySix():
     return render_template('query/query6.html', messages = "", form=form)
 
 def plotGraph(): # For putting things into the bokth thingy
-    specialString = ""
+    #specialString = ""
+    list = []
     plot.renderers = []
     # global year1 = 
     # print("currentQuery: " + currentQuery)
@@ -263,6 +265,8 @@ def plotGraph(): # For putting things into the bokth thingy
         y2 = []
         # plot.clear() #Clear the plot???
         for row in cursor.execute(sqlCommand):
+            #specialString += str(row) + ", "
+            list.append([row[0],row[1],row[2]])
             thing = sqlCommand[2]
             # print(row[0])
             plot.circle([row[0]], [row[1]], color = "skyblue", legend_label="Chicago Crime Rate")
@@ -304,9 +308,11 @@ def plotGraph(): # For putting things into the bokth thingy
         # plot.clear() #Clear the plot???
 
         for row in cursor.execute(sqlCommand):
+            #specialString += str(row) + ", "
             thing = sqlCommand[2]
             # print(row[0])
-            plot.circle([row[0] + row[1] / float(12)], [row[2]], color = "skyblue", legend_label="Homoside Rate")
+            list.append([row[0],row[1],row[2],row[3],row[4]])
+            plot.circle([row[0] + row[1] / float(12)], [row[2]], color = "skyblue", legend_label="Homiside Rate")
             plot.circle([row[0] + row[1] / float(12)], [row[3]], color = "red", legend_label="Covid Death Rate")
     elif(currentQuery == 3):
         # session['query3FromMonth'] = form.fromDateMonth.data
@@ -321,6 +327,11 @@ def plotGraph(): # For putting things into the bokth thingy
         toYear = session['query3ToYear']
         toMonth = session['query3ToMonth']
         toNumber = (int(toYear) * 12) + int(toMonth)
+
+        #x is years, y1 is the crime rate, y2 is the unemployment rate
+        x = []
+        y1 = []
+        y2 = []
 
         print(str(fromNumber) + " | " + str(toNumber))
 
@@ -344,16 +355,30 @@ def plotGraph(): # For putting things into the bokth thingy
         """
 
         for row in cursor.execute(sqlCommand):
-            print(str(row[0]) + " " + str(row[1]) + " " + str(row[2]) + " " + str(row[3]))
-            print(str(float(row[0] + (row[1] / 12))))
-            plot.circle(float(row[0] + (row[1] / 12)), [row[2]], color = "skyblue", legend_label="change in unemployment rates over time")
-            # plot.circle([row[0] + row[1] / float(12)], [row[3]], color = "red", legend_label="Covid Death Rate")
+            #specialString += str(row) + ", "
+            list.append([row[0],row[1],row[2],row[3]])
+            #print(str(row[0]) + " " + str(row[1]) + " " + str(row[2]) + " " + str(row[3]))
+            #print(str(float(row[0] + (row[1] / 12))))
+            plot.circle([row[0] + (row[1] / float(12))], [row[2]], color = "red", legend_label="crime rate")
+            plot.circle([row[0] + (row[1] / float(12))], [row[3]*200], color = "skyblue", legend_label="scaled unemployment rate")
+            x.append([row[0]+row[1]/float(12)])
+            y1.append([row[2]])
+            y2.append([row[3]*200])
+            
+
+        plot.line(x,y1, line_color = "red")
+        plot.line(x,y2)
+        plot.xaxis[0].axis_label = 'Years, Months'
+        plot.yaxis[0].axis_label = 'Rates'
+
         
     elif(currentQuery == 4):
         fromYear = session['query4FromDate']
         toYear = session['query4ToDate']
         midYear = session['query4CrimeRateYear']
         print("midYear: " + str(midYear))
+        x = []
+        y = []
 
         sqlCommand = """SELECT cp.year AS year, ROUND(cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop,7) AS rate_C
             FROM
@@ -362,7 +387,7 @@ def plotGraph(): # For putting things into the bokth thingy
             JOIN 
             (WITH badComm AS (SELECT "C.NGUYEN2".ChicagoCrimeCase.community AS comm, COUNT("C.NGUYEN2".ChicagoCrimeCase.caseNumber) AS cnum
             FROM "C.NGUYEN2".ChicagoCrimeCase
-            WHERE "C.NGUYEN2".ChicagoCrimeCase.year = """ + str(midYear) + """
+            WHERE "C.NGUYEN2".ChicagoCrimeCase.year = """ + str(midYear) + """  AND "C.NGUYEN2".ChicagoCrimeCase.community IS NOT NULL 
             GROUP BY "C.NGUYEN2".ChicagoCrimeCase.community)
             SELECT comm AS bc, cnum AS num
             FROM badComm
@@ -373,10 +398,21 @@ def plotGraph(): # For putting things into the bokth thingy
             ORDER BY cp.year"""
 
         for row in cursor.execute(sqlCommand):
+            #specialString += str(row) + ", "
+            list.append([row[0],row[1]])
             # thing = sqlCommand[2]
             # print(row[0])
             plot.circle([row[0]], [row[1]], color = "skyblue", legend_label="Crime Rate")
             # plot.circle([row[0] + row[1] / float(12)], [row[3]], color = "red", legend_label="Covid Death Rate")
+            x.append([row[0]])
+            y.append([row[1]])
+
+
+        plot.line(x,y)
+        plot.xaxis[0].axis_label = 'Years'
+        plot.yaxis[0].axis_label = 'Crime Rate'
+
+
     elif(currentQuery == 5):
         fromYear = session['query5FromYear']
         fromMonth = session['query5FromMonth']
@@ -386,6 +422,11 @@ def plotGraph(): # For putting things into the bokth thingy
         toYear = session['query5ToYear']
         toMonth = session['query5ToMonth']
         toNumber = (int(toYear) * 12) + int(toMonth)
+
+        #x is years, y1 is the homicide death count, y2 is the covid death count
+        x = []
+        y1 = []
+        y2 = []
 
         print(fromYear)
 
@@ -400,13 +441,24 @@ def plotGraph(): # For putting things into the bokth thingy
             (SELECT year AS year, month AS month, COUNT(caseCount) AS covid_death_count
             FROM BQUINTERO.ChicagoCOVIDReport
             GROUP BY year, month) cd ON hd.year = cd.year AND hd.month = cd.month
-            WHERE hd.year >= """ + str(fromYear) + """ AND hd.year <= """ + str(toYear) + """ 
+            WHERE hd.year*12 + hd.month >= """ + str(fromNumber) + """ AND hd.year*12 + hd.month <= """ + str(toNumber) + """ 
             ORDER BY hd.year, hd.month """ # TEST THIS
 
 
         for row in cursor.execute(sqlCommand): 
-            plot.circle([row[0] + (row[1] / float(12))], [row[2]], color = "skyblue", legend_label="Homoside Death Count")
-            plot.circle([row[0] + (row[1] / float(12))], [row[3]], color = "red", legend_label="Covid Death Count")
+            #specialString += str(row) + ", "
+            list.append([row[0],row[1],row[2],row[3]])
+            plot.circle([row[0] + (row[1] / float(12))], [row[2]], color = "red", legend_label="Homicide Death Count")
+            plot.circle([row[0] + (row[1] / float(12))], [row[3]], color = "skyblue", legend_label="Covid Death Count")
+            x.append([row[0]+row[1]/float(12)])
+            y1.append([row[2]])
+            y2.append([row[3]])
+
+        plot.line(x,y1)
+        plot.line(x,y2)
+        plot.xaxis[0].axis_label = 'Years, Months'
+        plot.yaxis[0].axis_label = 'Number of deaths'
+
 
     elif currentQuery == 6: 
         print("FKLQEFLKFJKQDLKFDE")
@@ -462,6 +514,8 @@ def plotGraph(): # For putting things into the bokth thingy
             year.append(i)
 
         for row in cursor.execute(sqlCommand): 
+            #specialString += str(row) + ", "
+            list.append([row[0],row[1],row[2],row[3]])
             if row[0] == 8:
                 # year.append(row[1])
                 district8.append(row[2])
@@ -516,87 +570,13 @@ def plotGraph(): # For putting things into the bokth thingy
 
         plot.line(year, distAdv, line_color = "red", legend_label= "Average Crime Rate") #Working on this
 
-
-
-def getResults():
-    specialString = ""
-    if(currentQuery == 1):
-        specialString = ""
-        # global year1 = 
-        year1 = session['query1FromDate']
-        year2 = session['query1ToDate']
-        crimeType = session['query1CrimeType'] 
-
-        print(year1)
-        sqlCommand = """SELECT c.year, c.rate_C, us.rate_US 
-                FROM
-                (SELECT cp.year AS year, ROUND(cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop,7) AS rate_C
-                FROM
-                (SELECT "C.NGUYEN2".ChicagoCrimeCase.year AS year, COUNT("C.NGUYEN2".ChicagoCrimeCase.caseNumber) AS cnum
-                FROM "C.NGUYEN2".ChicagoCrimeCase
-                WHERE "C.NGUYEN2".ChicagoCrimeCase.crimeType = '""" + str(crimeType) + """' AND "C.NGUYEN2".ChicagoCrimeCase.year >= """ + str(year1) + """ AND "C.NGUYEN2".ChicagoCrimeCase.year <= """ + str(year2) + """
-                GROUP BY "C.NGUYEN2".ChicagoCrimeCase.year) cp JOIN BQUINTERO.CHICAGOPOP ON BQUINTERO.CHICAGOPOP.year = cp.year) c
-                JOIN
-                (SELECT BQUINTERO.USCrimeNew.year AS year, BQUINTERO.USCrimeNew.rate AS rate_US
-                FROM BQUINTERO.USCrimeNew
-                WHERE BQUINTERO.USCrimeNew.type = '""" + str(crimeType) + """' AND BQUINTERO.USCrimeNew.year >= """ + str(year1) + """ AND BQUINTERO.USCrimeNew.year <= """ + str(year2) + """) us ON c.year = us.year
-                ORDER BY c.year"""
-        for row in cursor.execute(sqlCommand):
-            specialString += str(row) + ", "
-
-    elif(currentQuery == 2):
-        specialString = ""
-        # global year1 = 
-        year1Month = session['query2FromDateMonth']
-        year1Year = session['query2FromDateYear']
-        year2Month = session['query2ToDateMonth']
-        year2Year = session['query2ToDateYear']
-        sqlCommand = """SELECT hd.year, hd.month, hd.homicide_death_count AS homicide_death_count, cd.covid_death_count AS covid_death_count 
-            FROM
-            (SELECT year AS year, month AS month, COUNT(caseNumber) AS homicide_death_count
-            FROM "C.NGUYEN2".ChicagoCrimeCase
-            WHERE crimeType = 'HOMICIDE'
-            GROUP BY year, month) hd
-            JOIN
-            (SELECT year AS year, month AS month, COUNT(caseCount) AS covid_death_count
-            FROM BQUINTERO.ChicagoCOVIDReport
-            GROUP BY year, month) cd ON hd.year = cd.year AND hd.month = cd.month
-            WHERE hd.year >= 2021 AND hd.year <= 2022 AND ((hd.month >= 7 AND hd.month <= 12) OR (hd.month >= 1 AND hd.month <= 2)) 
-            ORDER BY hd.year, hd.month
-        """
-        for row in cursor.execute(sqlCommand):
-            specialString += str(row) + ", "
-    elif(currentQuery == 4):
-        fromYear = session['query4FromDate']
-        toYear = session['query4ToDate']
-        midYear = session['query4CrimeRateYear']
-        print("midYear: " + str(midYear))
-
-        sqlCommand = """SELECT cp.year AS year, ROUND(cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop,7) AS rate_C
-            FROM
-            (SELECT "C.NGUYEN2".ChicagoCrimeCase.year AS year, COUNT("C.NGUYEN2".ChicagoCrimeCase.caseNumber) AS cnum
-            FROM "C.NGUYEN2".ChicagoCrimeCase 
-            JOIN 
-            (WITH badComm AS (SELECT "C.NGUYEN2".ChicagoCrimeCase.community AS comm, COUNT("C.NGUYEN2".ChicagoCrimeCase.caseNumber) AS cnum
-            FROM "C.NGUYEN2".ChicagoCrimeCase
-            WHERE "C.NGUYEN2".ChicagoCrimeCase.year = """ + str(midYear) + """
-            GROUP BY "C.NGUYEN2".ChicagoCrimeCase.community)
-            SELECT comm AS bc, cnum AS num
-            FROM badComm
-            WHERE cnum = (SELECT MAX(cnum) FROM badComm)) b
-            ON "C.NGUYEN2".ChicagoCrimeCase.community = b.bc 
-            WHERE "C.NGUYEN2".ChicagoCrimeCase.year >= """ + str(fromYear) + """ AND "C.NGUYEN2".ChicagoCrimeCase.year <= """ + str(toYear) + """
-            GROUP BY "C.NGUYEN2".ChicagoCrimeCase.year) cp JOIN BQUINTERO.CHICAGOPOP ON BQUINTERO.CHICAGOPOP.year = cp.year
-            ORDER BY cp.year"""
-
-        for row in cursor.execute(sqlCommand):
-            specialString += str(row) + ", "
-
-    return specialString
+    #return specialString
+    return list
 
 @app.route('/results')
 def results():
-    plotGraph()
+    #plotGraph() COMMENTED OUT
+    result = plotGraph()
     # Generate components for embedding
     script, div = components(plot)
     # year1 = 2003
@@ -604,7 +584,8 @@ def results():
 
     # plot.show()
     # print(script)
-    return render_template('results.html', number=currentQuery, results=getResults(), thing=thingName, script=script, div=div)
+    #return render_template('results.html', number=currentQuery, results=getResults(), thing=thingName, script=script, div=div)
+    return render_template('results.html', number=currentQuery, results=result, thing=thingName, script=script, div=div)
 
 
 app.run()
