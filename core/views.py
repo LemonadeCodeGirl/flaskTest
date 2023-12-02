@@ -17,6 +17,24 @@ from bokeh.plotting import figure, show
 from bokeh.models import ColumnDataSource, Label, Legend, LabelSet, Range1d
 from bokeh.embed import components
 
+from flask_caching import Cache
+
+config = {
+    "DEBUG": True,          # some Flask specific configs
+    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300
+}
+
+# app = Flask(__name__)
+app.config.from_mapping(config)
+cache = Cache(app)
+
+
+config = {
+    "DEBUG": True,          # some Flask specific configs
+    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300
+}
 
 currentQuery = 1
 thingName = ""
@@ -124,6 +142,7 @@ plot.add_layout(Legend(), 'right')
 year1 = 2002
 year2 = 2005
 
+
 @app.route('/')
 def index():
     return 'Hello Ace123'
@@ -136,6 +155,7 @@ def about():
 # querySelector
 
 @app.route('/querySelector')
+@cache.cached(timeout=50)
 def querySelector():
     return render_template('querySelector.html')
 
@@ -239,6 +259,7 @@ def plotGraph(): # For putting things into the bokth thingy
     #specialString = ""
     list = []
     plot.renderers = []
+    plot.legend.items = []
     # global year1 = 
     # print("currentQuery: " + currentQuery)
     if(currentQuery == 1):

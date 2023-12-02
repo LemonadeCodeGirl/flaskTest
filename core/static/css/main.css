@@ -49,4 +49,26 @@ body {
     display: flex;  
     align-items: center;    
     justify-content: center;
+
+    width: 100%;
+}
+
+.bk-Figure{
+    width: 100%;
+
+    margin-right: 100px;
+    margin-bottom: 36px;
+    margin-left: 100px;
+}
+
+table{
+    width: 100%;
+    padding-right: 25px;
+    padding-left: 25px;
+    border: none;
+}
+
+.queryPageParagraph{
+    padding: 20px;
+    
 }
