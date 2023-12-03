@@ -60,10 +60,8 @@ class query2Form(FlaskForm): #Determine if rain is more likely to decrease crime
     submit = SubmitField('Submit')
 
 class query3Form(FlaskForm): #How has the change in unemployment rates in Chicago over time affected crime rates? 
-    # fromDateYear = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
-    # toDateYear = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
-
-    fromDateYear = IntegerField('From Year: ',validators=[
+    fromDateMonth = SelectField(u'Start Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+    fromDateYear = IntegerField('Start Year: ',validators=[
         validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
     ])
     # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
