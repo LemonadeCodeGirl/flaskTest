@@ -1,11 +1,36 @@
 body {
     text-align: center;
+    /* background-color: rgb(216, 212, 223); */
+    /* font-color: whtie; */
 }
 
 .title{
     font-size: 60px;
     font-weight: 100;
     
+}
+
+.heading{
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.center #button{
+    display: block;
+    color: white;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.centered #centerText{
+    font-size: 5rem;
 }
 
 #headerContent{
@@ -43,10 +68,41 @@ body {
 
 #allQueries{
     column-count: 3;
+    padding: 30px
+}
+
+.views{
+    column-count: 3;
 }
 
 .graphDisplay{
     display: flex;  
     align-items: center;    
     justify-content: center;
+
+    width: 100%;
+}
+
+.bk-Figure{
+    width: 100%;
+
+    margin-right: 100px;
+    margin-bottom: 36px;
+    margin-left: 100px;
+}
+
+table{
+    width: 100%;
+    padding-right: 25px;
+    padding-left: 25px;
+    border: none;
+}
+
+.queryPageParagraph{
+    padding: 20px;
+    
+}
+
+#queryTitle{
+    font-size: 4rem;
 }

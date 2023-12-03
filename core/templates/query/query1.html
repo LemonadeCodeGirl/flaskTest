@@ -9,13 +9,17 @@
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/node/16.13.2/node.min.js"></script>
 <body>
-    <h1>Compare the crime rate growth in Chicago vs the US over time (for different crime categories)</h1>
     
-    <p>Description Here</p>
+    <h1>Compare the crime rate growth in Chicago vs the US over time (for different crime categories)</h1>
+     
+    <p class="queryPageParagraph">Returns crime rate in Chicago (c.rate_C), crime rate in US (us.rate_US), and year for which the computation was performed (c.year). Where clause (in red) = parameters that should be inputted by the user and thus should be present on the UI form (crime type and time range)
+    </p>
     <div">
         {{ render_form(form) }}
 
     </div>
-    
+    <a href="../querySelector">
+        <button>Back To Query Selector</button>
+    </a>
 </body>
 </html>
