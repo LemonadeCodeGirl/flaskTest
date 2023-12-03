@@ -63,16 +63,17 @@ class query3Form(FlaskForm): #How has the change in unemployment rates in Chicag
     # fromDateYear = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
     # toDateYear = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
 
-    fromDateYear = IntegerField('From Year: ',validators=[
-        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
-    ])
-    # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
-    toDateYear = IntegerField('To Year: ',validators=[
+    fromDateMonth = SelectField(u'Start Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+    fromDateYear = IntegerField('Start Year: ',validators=[
         validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
     ])
 
-    fromDateMonth = SelectField(u'From Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
-    toDateMonth = SelectField(u'To Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+    toDateMonth = SelectField(u'End Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+    # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
+    toDateYear = IntegerField('End Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
+    
     # fromDate = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
     # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
     # crimeType = SelectField(u'Crime Type', choices=["HOMICIDE", "SEX OFFENSE", "ASSAULT", "ROBBERY"])
@@ -118,7 +119,7 @@ class query6Form(FlaskForm):
 
 
 # # Create a Bokeh plot
-plot = figure()
+plot = figure(frame_height=600, frame_width=1500)
 plot.add_layout(Legend(), 'right')
 
 year1 = 2002
@@ -126,11 +127,6 @@ year2 = 2005
 
 @app.route('/')
 def index():
-    return 'Hello Ace123'
-
-
-@app.route('/home')
-def about():
     return render_template('index.html', headline="Hello World!")
 
 # querySelector
@@ -368,8 +364,8 @@ def plotGraph(): # For putting things into the bokth thingy
 
         plot.line(x,y1, line_color = "red")
         plot.line(x,y2)
-        plot.xaxis[0].axis_label = 'Years, Months'
-        plot.yaxis[0].axis_label = 'Rates'
+        plot.xaxis[0].axis_label = 'Date (Years, Months)'
+        plot.yaxis[0].axis_label = 'Rates (Per 100,000 people))'
 
         
     elif(currentQuery == 4):
