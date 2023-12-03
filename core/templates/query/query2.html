@@ -3,16 +3,17 @@
 <html>
 
 <head>
-    <title>Query 2: Determine if rain is more likely to decrease crime compared to other weather conditions over a specified period of time.
-    </title>
+    <title>Query 2 Form</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/node/16.13.2/node.min.js"></script>
 <body>
-    <h1>Determine if rain is more likely to decrease crime compared to other weather conditions over a specified period of time.</h1>
+    <h1>Weather vs. Crime Rate</h1>
     
-    <p>Description Here</p>
+    <p>
+        Select the time frame and the type of crime to analyze if rainy weather had an effect on the the average number of crimes of that
+        type committed per day each month over the specified period of time. </p>
     
     {{ render_form(form) }}
 
