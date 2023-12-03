@@ -7,13 +7,75 @@
 
 </head>
 
-<!-- An example of JS -->
-<script> 
-    function onClick(button){
-        console.log("button " + button);
-    }
-</script>
+<body>
+    <h1 class="title"> Welcome to CIA</h1>
 
+    <div class="heading">
+        <img src="{{ url_for('static', filename='/images/homePageImage.jpg') }}" width="60%" height="40%">
+
+        <div class="centered">
+            <h1 id="centerText">Welcome</h1>
+            <p>Introducing CIA, a cutting-edge safety companion designed for both police officers and residents alike. This innovative device seamlessly integrates advanced technology to enhance community safety.</p>
+            <a href="querySelector">
+                <button class="center" id="button">See all Queries</button>
+            </a>
+        </div>
+
+    </div>
+
+
+    <div>
+        <h1>View Our Queries: </h1>
+
+        <div id="allQueries">
+            <div>
+                <img src="">
+                <h2>Compare the crime rate growth in Chicago vs the US over time</h2> 
+                <p>Returns crime rate in Chicag, Crime rate in US, and year for which the computation was performed. </p>
+                <a href="query/query1">
+                    <button>Select Query 1</button>
+                </a>
+            </div>
+    
+            <div>
+                <img src="">
+                <h2>Query 2</h2>
+                <p>information here</p>
+            </div>
+    
+            <div>
+                <img src="">
+                <h2>Query 3</h2>
+                <p>information here</p>
+            </div>
+    
+            <div>
+                <img src="">
+                <h2>Query 4</h2>
+                <p>information here</p>
+            </div>
+    
+            <div>
+                <img src="">
+                <h2>Query 5</h2>
+                <p>information here</p>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h1>Select your view: </h1>
+
+        <div class="views">
+            <h2>View 1</h2>
+            <h2>View 2</h2>
+            <h2>View 3</h2>
+        </div>
+    </div>
+
+</body>
+
+<!-- 
 <body class="text-green-600">
     <h1 class="title">Welcome to CIA</h1>
 
@@ -25,7 +87,7 @@
             <p>small text goes here</p>
             <a href="querySelector">
                 <button onclick="onClick()"> Go To Query Selector </button>
-            </a> <!-- Add arrow to the right-->    
+            </a> <!-- Add arrow to the right
         </div>
     </div>
 
@@ -38,8 +100,9 @@
 
         <div>
             <img src="">
-            <h3>Query 1</h3>
-            <p>information here</p>
+            <h3>Query 1: Compare the crime rate growth in Chicago vs the US over time</h3> 
+            <p>Returns crime rate in Chicag, Crime rate in US, and year for which the computation was performed. </p>
+
         </div>
 
         <div>
@@ -73,9 +136,9 @@
         </div>
     </div>
 
-    <a href="querySelector.html">
+    <a href="querySelector">
         <button>See all queries</button>
     </a>
 
-</body>
+</body> -->
 </html>
