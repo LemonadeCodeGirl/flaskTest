@@ -371,8 +371,6 @@ def plotGraph(): # For putting things into the bokth thingy
         y1 = []
         y2 = []
 
-        print(str(fromNumber) + " | " + str(toNumber))
-
         sqlCommand = """SELECT year, month, round(crime_count/pop*100000, 7) AS crime_rate, unemployment_rate
             FROM
             (
