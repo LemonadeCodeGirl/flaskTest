@@ -9,6 +9,9 @@
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/node/16.13.2/node.min.js"></script>
 <body>
+    <a href="../querySelector">
+        <button id="backButton">Back To Query Selector</button>
+    </a>
     <div>
         <img src="{{ url_for('static', filename='/images/homePageImage.jpg') }}" width="60%" height="40%">
     </div>
@@ -23,8 +26,5 @@
         {{ render_form(form) }}
 
     </div>
-    <a href="../querySelector">
-        <button>Back To Query Selector</button>
-    </a>
 </body>
 </html>

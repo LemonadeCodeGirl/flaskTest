@@ -58,3 +58,13 @@ button{
   background: #F6F9FE;
   color: #174ea6;
 }
+
+#backButton{
+    position: absolute;
+    left: 20px;
+    font-size: 14px;
+    color: white;
+    background: none;
+    border: none;
+    text-decoration: underline;
+}

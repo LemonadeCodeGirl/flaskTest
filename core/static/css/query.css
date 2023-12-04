@@ -50,3 +50,13 @@ form #submit{
 .mb-3{
     padding-bottom: 7px;
 }
+
+#backButton{
+    position: absolute;
+    left: 20px;
+    font-size: 14px;
+    color: white;
+    background: none;
+    border: none;
+    text-decoration: underline;
+}

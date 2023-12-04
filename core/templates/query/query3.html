@@ -12,14 +12,14 @@
     <div>
         <img src="{{ url_for('static', filename='/images/homePageImage.jpg') }}" width="60%" height="40%">
     </div>
+    <a href="../querySelector">
+        <button id="backButton">Back To Query Selector</button>
+    </a>
     <h1>How has the change in unemployment rates in Chicago over time affected crime rates? </h1>
     
     <p>Returns a plot of unemployment rates and crime rates in Chicago.</p>
     
     {{ render_form(form) }}
 
-    <a href="../querySelector">
-        <button>Back To Query Selector</button>
-    </a>
 </body>
 </html>

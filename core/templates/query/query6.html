@@ -12,14 +12,13 @@
     <div>
         <img src="{{ url_for('static', filename='/images/homePageImage.jpg') }}" width="60%" height="40%">
     </div>
+    <a href="../querySelector">
+        <button id="backButton">Back To Query Selector</button>
+    </a>
     <h1>Compare the average crime rate in Chicago over time to the crime rate (over time) in police districts in which the percentage of domestic crimes that result in an arrest is higher than average in Chicago</h1>
     
     <p>Select a time frame for which the crime rate over time for districts with higher than average arrest rates will be calculated</p>
     
     {{ render_form(form) }}
-
-    <a href="../querySelector">
-        <button>Back To Query Selector</button>
-    </a>
 </body>
 </html>

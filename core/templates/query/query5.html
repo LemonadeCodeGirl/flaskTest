@@ -12,14 +12,13 @@
     <div>
         <img src="{{ url_for('static', filename='/images/homePageImage.jpg') }}" width="60%" height="40%">
     </div>
+    <a href="../querySelector">
+        <button id="backButton">Back To Query Selector</button>
+    </a>
     <h1>Compare the impact of unemployment vs COVID on the crime rate over time (2020-2022) </h1>
     
     <p>Description Here</p>
     
     {{ render_form(form) }}
-
-    <a href="../querySelector">
-        <button>Back To Query Selector</button>
-    </a>
 </body>
 </html>
