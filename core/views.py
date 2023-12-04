@@ -316,10 +316,17 @@ def plotGraph(): # For putting things into the bokth thingy
             #specialString += str(row) + ", "
             thing = sqlCommand[2]
             # print(row[0])
-            
+
+            x.append(row[0] + row[1] / float(12))
+            y1.append(row[2])
+            y2.append(row[3])
+
             list.append([row[0],row[1],row[2],row[3]])
             plot.circle([row[0] + row[1] / float(12)], [row[2]], color = "skyblue", legend_label="Homiside Rate")
             plot.circle([row[0] + row[1] / float(12)], [row[3]], color = "red", legend_label="Covid Death Rate")
+
+        plot.line(x,y1)
+        plot.line(x,y2, line_color = "maroon")
 
     elif(currentQuery == 3):
         # session['query3FromMonth'] = form.fromDateMonth.data
