@@ -18,24 +18,6 @@ from bokeh.models import ColumnDataSource, Label, Legend, LabelSet, Range1d
 from bokeh.embed import components
 from bokeh.io import curdoc
 
-from flask_caching import Cache
-
-config = {
-    "DEBUG": True,          # some Flask specific configs
-    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
-    "CACHE_DEFAULT_TIMEOUT": 300
-}
-
-# app = Flask(__name__)
-app.config.from_mapping(config)
-cache = Cache(app)
-
-
-config = {
-    "DEBUG": True,          # some Flask specific configs
-    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
-    "CACHE_DEFAULT_TIMEOUT": 300
-}
 
 currentQuery = 1
 thingName = ""
@@ -66,9 +48,9 @@ class query2Form(FlaskForm): #Determine if rain is more likely to decrease crime
     # fromDate = DateField('fromDate', format='%Y-%m') #is this doing anything???
     # toDate = DateField('toDate') # FIX LATER
 
-    fromDateYear = SelectField(u'From Year', choices=[2021, 2022, 2023])
+    fromDateYear = SelectField(u'From Year', choices=[2020, 2021, 2022])
     # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
-    toDateYear = SelectField(u'To Year', choices=[2021, 2022, 2023])
+    toDateYear = SelectField(u'To Year', choices=[2020, 2021, 2022])
 
     fromDateMonth = SelectField(u'From Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
     toDateMonth = SelectField(u'To Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
@@ -79,17 +61,19 @@ class query2Form(FlaskForm): #Determine if rain is more likely to decrease crime
     submit = SubmitField('Submit')
 
 class query3Form(FlaskForm): #How has the change in unemployment rates in Chicago over time affected crime rates? 
-    fromDateMonth = SelectField(u'Start Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
-    fromDateYear = IntegerField('Start Year: ',validators=[
+    # fromDateYear = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+    # toDateYear = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016])
+
+    fromDateYear = IntegerField('From Year: ',validators=[
+        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+    ])
+    # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
+    toDateYear = IntegerField('To Year: ',validators=[
         validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
     ])
 
-    toDateMonth = SelectField(u'End Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
-    # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
-    toDateYear = IntegerField('End Year: ',validators=[
-        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
-    ])
-    
+    fromDateMonth = SelectField(u'From Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+    toDateMonth = SelectField(u'To Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
     # fromDate = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
     # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
     # crimeType = SelectField(u'Crime Type', choices=["HOMICIDE", "SEX OFFENSE", "ASSAULT", "ROBBERY"])
@@ -135,7 +119,7 @@ class query6Form(FlaskForm):
 
 
 # # Create a Bokeh plot
-plot = figure(frame_height=600, frame_width=1500)
+plot = figure()
 plot.add_layout(Legend(), 'right')
 # plot = figure(background_color="#ff0000")
 
@@ -146,12 +130,16 @@ year2 = 2005
 
 @app.route('/')
 def index():
+    return 'Hello Ace123'
+
+
+@app.route('/home')
+def about():
     return render_template('index.html', headline="Hello World!")
 
 # querySelector
 
 @app.route('/querySelector')
-@cache.cached(timeout=50)
 def querySelector():
     return render_template('querySelector.html')
 
@@ -179,6 +167,8 @@ def queryTwo():
     currentQuery = 2
     form = query2Form()
     if form.validate_on_submit():
+        # print("form.toDate.data: " + form.toDate.data)
+        # currentQuery = 2
         session['query2FromDateMonth'] = form.fromDateMonth.data
         session['query2FromDateYear'] = form.fromDateYear.data
         session['query2ToDateMonth'] = form.toDateMonth.data
@@ -297,66 +287,39 @@ def plotGraph(): # For putting things into the bokth thingy
         plot.line(x,y2)
         plot.xaxis[0].axis_label = 'Years'
         plot.yaxis[0].axis_label = 'Crime Rates'
-
     elif(currentQuery == 2):
-        fromYear = session['query2FromDateYear']
-        fromMonth = session['query2FromDateMonth']
-        fromNumber = (int(fromYear) * 12) + int(fromMonth)
-
-        toYear = session['query2ToDateYear']
-        toMonth = session['query2ToDateMonth']
-        toNumber = (int(toYear) * 12) + int(toMonth)
-
+        year1Month = session['query2FromDateMonth']
+        year1Year = session['query2FromDateYear']
+        year2Month = session['query2ToDateMonth']
+        year2Year = session['query2ToDateYear']
         crimeType = session['query2CrimeType']
 
-        x = []
-        y1 = []
-        y2 = []
+        print(str(year2Year) + " year2Year")
 
-        '''
-        R: For the given time period, search for days during which the precipitation index was >= 0.05 and count the number of crimes 
-        of the specified type that happened on these days during that month and year; return the crime type, year, month, and 
-        the average number of crimes during rainy days that month
-        NR: For the given time period, search for days during which the precipitation index was < 0.05 and count the number of crimes 
-        of the specified type that happened on these days during that month and year; return the crime type, year, month, and 
-        the average number of crimes during rainy days that month
-        Join the tables R and NR on the same year, month, and crime type, and then return the crime type, year, month, and the rounded 
-        values for the number of crimes on rainy and non-rainy days per month'''
-
-        sqlCommand = """SELECT r.type, r.year, r.month, ROUND(r.num_Cr_Rainy,3), ROUND(nr.num_Cr_Not_Rainy,3) 
+        sqlCommand = """SELECT hd.year, hd.month, hd.homicide_death_count AS homicide_death_count, cd.covid_death_count AS covid_death_count 
             FROM
-                (SELECT cc.crimeType AS type, cc.year AS year, cc.month AS month, 
-                COUNT(cc.caseNumber)/COUNT(DISTINCT cc.day) AS num_Cr_Rainy
-                FROM "C.NGUYEN2".ChicagoCrimeCase cc JOIN BQUINTERO.ChicagoWeatherReport cw ON 
-                cc.year = cw.year AND cc.month = cw.month AND cc.day = cw.day 
-                WHERE cw.precipitation >= 0.05 AND cc.crimeType = '""" + str(crimeType) + """' 
-                AND cc.year*12+cc.month >= """ + str(fromNumber) + """ AND cc.year*12+cc.month <= """ + str(toNumber) + """ 
-                GROUP BY cc.crimeType, cc.year, cc.month
-                ORDER BY cc.year, cc.month) r
+            (SELECT year AS year, month AS month, COUNT(caseNumber) AS homicide_death_count
+            FROM "C.NGUYEN2".ChicagoCrimeCase
+            WHERE crimeType = 'HOMICIDE'
+            GROUP BY year, month) hd
             JOIN
-                (SELECT cc.crimeType AS type, cc.year AS year, cc.month AS month, 
-                COUNT(cc.caseNumber)/COUNT(DISTINCT cc.day) AS num_Cr_Not_Rainy
-                FROM "C.NGUYEN2".ChicagoCrimeCase cc JOIN BQUINTERO.ChicagoWeatherReport cw ON 
-                cc.year = cw.year AND cc.month = cw.month AND cc.day = cw.day 
-                WHERE cw.precipitation < 0.05 AND cc.crimeType = '""" + str(crimeType) + """' 
-                AND cc.year*12+cc.month >= """ + str(fromNumber) + """ AND cc.year*12+cc.month <= """ + str(toNumber) + """
-                GROUP BY cc.crimeType, cc.year, cc.month
-                ORDER BY cc.year, cc.month) nr
-            ON r.year = nr.year AND r.month = nr.month AND r.type = nr.type
+            (SELECT year AS year, month AS month, COUNT(caseCount) AS covid_death_count
+            FROM BQUINTERO.ChicagoCOVIDReport
+            GROUP BY year, month) cd ON hd.year = cd.year AND hd.month = cd.month
+            WHERE hd.year >= """ + str(year1Year) + """ AND hd.year <= """ + str(year2Year) + """ AND ((hd.month >= 7 AND hd.month <= 12) OR (hd.month >= 1 AND hd.month <= 2)) 
+            ORDER BY hd.year, hd.month
+
         """
+
+        # plot.clear() #Clear the plot???
+
         for row in cursor.execute(sqlCommand):
+            #specialString += str(row) + ", "
+            thing = sqlCommand[2]
+            # print(row[0])
             list.append([row[0],row[1],row[2],row[3],row[4]])
-            plot.circle([row[1] + row[2] / float(12)], [row[3]], color = "skyblue", legend_label="Average Crime Rates on Rainy Days")
-            plot.circle([row[1] + row[2] / float(12)], [row[4]], color = "red", legend_label="Average Crime Rates on Non-Rainy Days")
-            x.append([row[1]+row[2]/float(12)])
-            y1.append([row[3]])
-            y2.append([row[4]])
-
-        plot.line(x,y1)
-        plot.line(x,y2, line_color = "red")
-        plot.xaxis[0].axis_label = 'Years/Months'
-        plot.yaxis[0].axis_label = 'Crime Rates'
-
+            plot.circle([row[0] + row[1] / float(12)], [row[2]], color = "skyblue", legend_label="Homiside Rate")
+            plot.circle([row[0] + row[1] / float(12)], [row[3]], color = "red", legend_label="Covid Death Rate")
     elif(currentQuery == 3):
         # session['query3FromMonth'] = form.fromDateMonth.data
         # session['query3FromYear'] = form.fromDateYear.data
@@ -411,8 +374,8 @@ def plotGraph(): # For putting things into the bokth thingy
 
         plot.line(x,y1, line_color = "red")
         plot.line(x,y2)
-        plot.xaxis[0].axis_label = 'Date (Years, Months)'
-        plot.yaxis[0].axis_label = 'Rates (Per 100,000 people))'
+        plot.xaxis[0].axis_label = 'Years, Months'
+        plot.yaxis[0].axis_label = 'Rates'
 
         
     elif(currentQuery == 4):
@@ -468,53 +431,6 @@ def plotGraph(): # For putting things into the bokth thingy
 
 
     elif(currentQuery == 5):
-        fromYear = session['query5FromYear']
-        fromMonth = session['query5FromMonth']
-        fromNumber = (int(fromYear) * 12) + int(fromMonth)
-
-        
-        toYear = session['query5ToYear']
-        toMonth = session['query5ToMonth']
-        toNumber = (int(toYear) * 12) + int(toMonth)
-
-        #x is years, y1 is the homicide death count, y2 is the covid death count
-        x = []
-        y1 = []
-        y2 = []
-
-        print(fromYear)
-
-        sqlCommand = """ 
-            SELECT hd.year, hd.month, hd.homicide_death_count AS homicide_death_count, cd.covid_death_count AS covid_death_count 
-            FROM
-            (SELECT year AS year, month AS month, COUNT(caseNumber) AS homicide_death_count
-            FROM "C.NGUYEN2".ChicagoCrimeCase
-            WHERE crimeType = 'HOMICIDE'
-            GROUP BY year, month) hd
-            JOIN
-            (SELECT year AS year, month AS month, COUNT(caseCount) AS covid_death_count
-            FROM BQUINTERO.ChicagoCOVIDReport
-            GROUP BY year, month) cd ON hd.year = cd.year AND hd.month = cd.month
-            WHERE hd.year*12 + hd.month >= """ + str(fromNumber) + """ AND hd.year*12 + hd.month <= """ + str(toNumber) + """ 
-            ORDER BY hd.year, hd.month """ # TEST THIS
-
-
-        for row in cursor.execute(sqlCommand): 
-            #specialString += str(row) + ", "
-            list.append([row[0],row[1],row[2],row[3]])
-            plot.circle([row[0] + (row[1] / float(12))], [row[2]], color = "red", legend_label="Homicide Death Count")
-            plot.circle([row[0] + (row[1] / float(12))], [row[3]], color = "skyblue", legend_label="Covid Death Count")
-            x.append([row[0]+row[1]/float(12)])
-            y1.append([row[2]])
-            y2.append([row[3]])
-
-        plot.line(x,y1)
-        plot.line(x,y2)
-        plot.xaxis[0].axis_label = 'Years, Months'
-        plot.yaxis[0].axis_label = 'Number of deaths'
-
-
-    elif currentQuery == 6: 
         print("FKLQEFLKFJKQDLKFDE")
         fromYear = session['query6FromYear']
         toYear = session['query6ToYear']
@@ -615,6 +531,9 @@ def plotGraph(): # For putting things into the bokth thingy
                 # year.append(row[1])
                 district25.append(row[2])
                 plot.circle([row[1]], [row[2]], color = "mediumspringgreen", legend_label="Crime Rate in District " +str(row[0]))
+
+            # print(row[0])
+            #plot.circle([row[1]], [row[2]], color = "skyblue", legend_label="Crime Rate in District " + str(row[0]))
         print("Hi there")
         print(str(len(year)) + " " + str(len(district8)))
         plot.line(year, district8, line_color = "darkviolet")
@@ -633,6 +552,130 @@ def plotGraph(): # For putting things into the bokth thingy
 
     #return specialString
     return list
+
+
+    # elif currentQuery == 6: 
+    #     print("FKLQEFLKFJKQDLKFDE")
+    #     fromYear = session['query6FromYear']
+    #     toYear = session['query6ToYear']
+
+    #     sqlCommand = """SELECT cp.pd AS police_District, cp.year AS year, ROUND(cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop,7) AS rate_C, ave.aveCr AS average_Crime_Rate
+    #         FROM
+    #         (SELECT c.policeDistrict AS pd, c.year AS year, COUNT(c.caseNumber) AS cnum
+    #         FROM "C.NGUYEN2".ChicagoCrimeCase c
+    #         WHERE c.policeDistrict IN
+    #         (
+    #         WITH arrested AS (SELECT c.policeDistrict AS pd, ROUND(COUNT(c.caseNumber)/pddom.dom,5) AS arrestedDom  
+    #         FROM "C.NGUYEN2".ChicagoCrimeCase c JOIN (SELECT c.policeDistrict AS pd, COUNT(c.caseNumber) AS dom
+    #         FROM "C.NGUYEN2".ChicagoCrimeCase c
+    #         WHERE c.isDomestic = 'TRUE'
+    #         GROUP BY c.policeDistrict) pddom on pddom.pd = c.policeDistrict 
+    #         WHERE c.isDomestic = 'TRUE' AND c.isArrested = 'TRUE'
+    #         GROUP BY c.policeDistrict, pddom.dom)
+    #         SELECT c.policeDistrict AS pd
+    #         FROM "C.NGUYEN2".ChicagoCrimeCase c JOIN arrested ON c.policeDistrict = arrested.pd
+    #         WHERE arrested.arrestedDom > (SELECT AVG(arrestedDom) FROM arrested)
+    #         GROUP BY c.policeDistrict)
+    #         GROUP BY c.policeDistrict, c.year
+    #         ORDER BY c.policeDistrict) cp JOIN BQUINTERO.CHICAGOPOP ON BQUINTERO.CHICAGOPOP.year = cp.year
+    #         JOIN (SELECT cp.year AS year, ROUND((cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop)/22,7) AS aveCr
+    #         FROM
+    #         (SELECT c.year AS year, COUNT(c.caseNumber) AS cnum
+    #         FROM "C.NGUYEN2".ChicagoCrimeCase c
+    #         GROUP BY c.year) cp JOIN BQUINTERO.CHICAGOPOP ON BQUINTERO.CHICAGOPOP.year = cp.year) ave ON ave.year = cp.year 
+    #         WHERE cp.year >= """ + str(fromYear) + """ AND cp.year <= """ + str(toYear) 
+
+    #     districtCounter = 0
+    #     interval = toYear - fromYear
+
+    #     district8 = []
+    #     district9 = []
+    #     district10 = []
+    #     district12 = []
+    #     district14 = []
+    #     district16 = []
+    #     district17 = []
+    #     district19 = []
+    #     district20 = []
+    #     district24 = []
+    #     district25 = []
+
+    #     distAdv = []
+
+    #     year = []
+
+    #     for i in range(fromYear, toYear + 1):
+    #         year.append(i)
+
+    #     for row in cursor.execute(sqlCommand):
+    #         #specialString += str(row) + ", "
+    #         list.append([row[0],row[1],row[2],row[3]])
+    #         if row[0] == 8:
+    #             # year.append(row[1])
+    #             district8.append(row[2])
+    #             distAdv.append(row[3])
+    #             plot.circle([row[1]], [row[2]], color = "darkviolet", legend_label="Crime Rate in District " +str(row[0]))
+    #         elif row[0] == 9:
+    #             # year.append(row[1])
+    #             district9.append(row[2])
+    #             plot.circle([row[1]], [row[2]], color = "yellow", legend_label="Crime Rate in District " + str(row[0]))
+    #         elif row[0] == 10:
+    #             # year.append(row[1])
+    #             district10.append(row[2])
+    #             plot.circle([row[1]], [row[2]], color = "green", legend_label="Crime Rate in District " + str(row[0]))
+    #         elif row[0] == 12:
+    #             # year.append(row[1])
+    #             district12.append(row[2])
+    #             plot.circle([row[1]], [row[2]], color = "black", legend_label="Crime Rate in District " + str(row[0]))
+    #         elif row[0] == 14:
+    #             # year.append(row[1])
+    #             district14.append(row[2])
+    #             plot.circle([row[1]], [row[2]], color = "purple", legend_label="Crime Rate in District " +str(row[0]))
+    #         elif row[0] == 16:
+    #             # year.append(row[1])
+    #             district16.append(row[2])
+    #             plot.circle([row[1]], [row[2]], color = "goldenrod", legend_label="Crime Rate in District " +str(row[0]))
+    #         elif row[0] == 17:
+    #             # year.append(row[1])
+    #             district17.append(row[2])
+    #             plot.circle([row[1]], [row[2]], color = "blue", legend_label="Crime Rate in District " +str(row[0]))
+    #         elif row[0] == 19:
+    #             # year.append(row[1])
+    #             district19.append(row[2])
+    #             plot.circle([row[1]], [row[2]], color = "maroon", legend_label="Crime Rate in District " +str(row[0]))
+    #         elif row[0] == 20:
+    #             # year.append(row[1])
+    #             district20.append(row[2])
+    #             plot.circle([row[1]], [row[2]], color = "deeppink", legend_label="Crime Rate in District " +str(row[0]))
+    #         elif row[0] == 24:
+    #             # year.append(row[1])
+    #             district24.append(row[2])
+    #             plot.circle([row[1]], [row[2]], color = "skyblue", legend_label="Crime Rate in District " +str(row[0]))
+    #         elif row[0] == 25:
+    #             # year.append(row[1])
+    #             district25.append(row[2])
+    #             plot.circle([row[1]], [row[2]], color = "mediumspringgreen", legend_label="Crime Rate in District " +str(row[0]))
+
+    #         # print(row[0])
+    #         #plot.circle([row[1]], [row[2]], color = "skyblue", legend_label="Crime Rate in District " + str(row[0]))
+    #     print("Hi there")
+    #     print(str(len(year)) + " " + str(len(district8)))
+    #     plot.line(year, district8, line_color = "darkviolet")
+    #     plot.line(year, district9, line_color = "yellow")
+    #     plot.line(year, district10, line_color = "green")
+    #     plot.line(year, district12, line_color = "black")
+    #     plot.line(year, district14, line_color = "purple")
+    #     plot.line(year, district16, line_color = "goldenrod")
+    #     plot.line(year, district17, line_color = "blue")
+    #     plot.line(year, district19, line_color = "maroon")
+    #     plot.line(year, district20, line_color = "deeppink")
+    #     plot.line(year, district24, line_color = "skyblue")
+    #     plot.line(year, district25, line_color = "mediumspringgreen")
+
+    #     plot.line(year, distAdv, line_color = "red", line_width = 3, legend_label="Average Crime Rate") #Working on this
+
+    # #return specialString
+    # return list
 
 @app.route('/results')
 def results():
