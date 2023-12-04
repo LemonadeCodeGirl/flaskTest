@@ -1,0 +1,40 @@
+body{
+    text-align: center;
+    color: white;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index:-5;
+}
+
+h1{
+    font-size: 6em;
+}.graphDisplay{
+    display: flex;  
+    align-items: center;    
+    justify-content: center;
+
+    width: 100%;
+}
+
+.bk-Figure{
+    width: 100%;
+
+    margin-right: 100px;
+    margin-bottom: 36px;
+    margin-left: 100px;
+}
+
+table{
+    width: 100%;
+    padding-right: 25px;
+    padding-left: 25px;
+    border: none;
+}
+
