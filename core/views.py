@@ -358,14 +358,9 @@ def plotGraph(): # For putting things into the bokth thingy
         plot.yaxis[0].axis_label = 'Crime Rates'
 
     elif(currentQuery == 3):
-        # session['query3FromMonth'] = form.fromDateMonth.data
-        # session['query3FromYear'] = form.fromDateYear.data
-        # session['query3ToMonth'] = form.toDateMonth.data
-        # session['query3ToYear'] = form.toDateYear.data
         fromYear = session['query3FromYear']
         fromMonth = session['query3FromMonth']
         fromNumber = (int(fromYear) * 12) + int(fromMonth)
-
         
         toYear = session['query3ToYear']
         toMonth = session['query3ToMonth']
@@ -375,8 +370,6 @@ def plotGraph(): # For putting things into the bokth thingy
         x = []
         y1 = []
         y2 = []
-
-        print(str(fromNumber) + " | " + str(toNumber))
 
         sqlCommand = """SELECT year, month, round(crime_count/pop*100000, 7) AS crime_rate, unemployment_rate
             FROM
@@ -398,10 +391,7 @@ def plotGraph(): # For putting things into the bokth thingy
         """
 
         for row in cursor.execute(sqlCommand):
-            #specialString += str(row) + ", "
             list.append([row[0],row[1],row[2],row[3]])
-            #print(str(row[0]) + " " + str(row[1]) + " " + str(row[2]) + " " + str(row[3]))
-            #print(str(float(row[0] + (row[1] / 12))))
             plot.circle([row[0] + (row[1] / float(12))], [row[2]], color = "red", legend_label="crime rate")
             plot.circle([row[0] + (row[1] / float(12))], [row[3]*200], color = "skyblue", legend_label="scaled unemployment rate")
             x.append([row[0]+row[1]/float(12)])
