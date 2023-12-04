@@ -97,12 +97,14 @@ class query4Form(FlaskForm):
     submit = SubmitField('Submit')
 
 class query5Form(FlaskForm):
-    fromDateYear = SelectField(u'From Year', choices=[2020, 2021, 2022])
-    # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
-    toDateYear = SelectField(u'To Year', choices=[2020, 2021, 2022])
+    fromDate = IntegerField('From Year: ',validators=[
+        validators.NumberRange(min=2001, max=2023),  # Adjust min and max as needed
+    ])
 
-    fromDateMonth = SelectField(u'From Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
-    toDateMonth = SelectField(u'To Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
+    toDate = IntegerField('To Year: ',validators=[
+        validators.NumberRange(min=2001, max=2023),  # Adjust min and max as needed
+    ])
+    
 
     submit = SubmitField('Submit')
 
@@ -213,10 +215,8 @@ def queryFive():
     form = query5Form()
 
     if form.validate_on_submit(): 
-        session['query5FromMonth'] = form.fromDateMonth.data
-        session['query5FromYear'] = form.fromDateYear.data
-        session['query5ToMonth'] = form.toDateMonth.data
-        session['query5ToYear'] = form.toDateYear.data
+        session['query5FromYear'] = form.fromDate.data
+        session['query5ToYear'] = form.toDate.data
         return redirect( url_for('results'))
 
     return render_template('query/query5.html', messages = "", form=form)
@@ -433,8 +433,8 @@ def plotGraph(): # For putting things into the bokth thingy
 
     elif(currentQuery == 5):
         print("FKLQEFLKFJKQDLKFDE")
-        fromYear = session['query6FromYear']
-        toYear = session['query6ToYear']
+        fromYear = session['query5FromYear']
+        toYear = session['query5ToYear']
 
         sqlCommand = """SELECT cp.pd AS police_District, cp.year AS year, ROUND(cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop,7) AS rate_C, ave.aveCr AS average_Crime_Rate
             FROM
@@ -550,7 +550,6 @@ def plotGraph(): # For putting things into the bokth thingy
         plot.line(year, district25, line_color = "mediumspringgreen")
 
         plot.line(year, distAdv, line_color = "red", line_width = 3, legend_label="Average Crime Rate") #Working on this
-
     #return specialString
     return list
 
