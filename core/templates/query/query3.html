@@ -5,18 +5,22 @@
 <head>
     <title>Query 3: How has the change in unemployment rates in Chicago over time affected crime rates? </title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/query.css') }}">
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/node/16.13.2/node.min.js"></script>
 <body>
+    <div>
+        <img src="{{ url_for('static', filename='/images/homePageImage.jpg') }}" width="60%" height="40%">
+    </div>
+    <a href="../querySelector">
+        <button id="backButton">Back To Query Selector</button>
+    </a>
     <h1>How has the change in unemployment rates in Chicago over time affected crime rates? </h1>
     
-    <p></p>
+    <p>Returns a plot of unemployment rates and crime rates in Chicago.</p>
     
+    <h2>Enter Filters: </h2>
     {{ render_form(form) }}
 
-    <a href="../querySelector">
-        <button>Back To Query Selector</button>
-    </a>
 </body>
 </html>

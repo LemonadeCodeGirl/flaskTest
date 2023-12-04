@@ -5,18 +5,21 @@
 <head>
     <title>Query 6: Compare the average crime rate in Chicago over time to the crime rate (over time) in police districts in which the percentage of domestic crimes that result in an arrest is higher than average in Chicago</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/query.css') }}">
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/node/16.13.2/node.min.js"></script>
 <body>
+    <div>
+        <img src="{{ url_for('static', filename='/images/homePageImage.jpg') }}" width="60%" height="40%">
+    </div>
+    <a href="../querySelector">
+        <button id="backButton">Back To Query Selector</button>
+    </a>
     <h1>Compare the average crime rate in Chicago over time to the crime rate (over time) in police districts in which the percentage of domestic crimes that result in an arrest is higher than average in Chicago</h1>
     
-    <p>Description Here</p>
+    <p>Select a time frame for which the crime rate over time for districts with higher than average arrest rates will be calculated</p>
     
+    <h2>Enter Filters: </h2>
     {{ render_form(form) }}
-
-    <a href="../querySelector">
-        <button>Back To Query Selector</button>
-    </a>
 </body>
 </html>

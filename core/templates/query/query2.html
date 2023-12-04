@@ -5,20 +5,25 @@
 <head>
     <title>Query 2 Form</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/query.css') }}">
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/node/16.13.2/node.min.js"></script>
 <body>
+    <div>
+        <img src="{{ url_for('static', filename='/images/homePageImage.jpg') }}" width="60%" height="40%">
+    </div>
+    <a href="../querySelector">
+        <button id="backButton">Back To Query Selector</button>
+    </a>
     <h1>Weather vs. Crime Rate</h1>
     
     <p>
         Select the time frame and the type of crime to analyze if rainy weather had an effect on the the average number of crimes of that
         type committed per day each month over the specified period of time. </p>
     
+    <h2>Enter Filters: </h2>
     {{ render_form(form) }}
 
-    <a href="../querySelector">
-        <button>Back To Query Selector</button>
-    </a>
+
 </body>
 </html>

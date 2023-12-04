@@ -4,12 +4,13 @@
 <head>
     <title>Results for Query {{number}}</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/results.css') }}">
     
     
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/node/16.13.2/node.min.js"></script>
 <body>
+    <img src="{{ url_for('static', filename='/images/homePageImage.jpg') }}" width="60%" height="40%">
     <h1>Results for Query {{number}}</h1>
     
     <p>{{thing}}</p>
