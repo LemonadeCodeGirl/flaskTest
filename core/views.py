@@ -99,11 +99,11 @@ class query4Form(FlaskForm):
     # fromDate = SelectField(u'From', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023])
     # toDate = SelectField(u'To: ', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023])
     fromDate = IntegerField('From Year: ',validators=[
-        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+        validators.NumberRange(min=2001, max=2023),  # Adjust min and max as needed
     ])
     # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
     toDate = IntegerField('To Year: ',validators=[
-        validators.NumberRange(min=2001, max=2015),  # Adjust min and max as needed
+        validators.NumberRange(min=2001, max=2023),  # Adjust min and max as needed
     ])
     
     crimeRateDate = SelectField(u'Crime Rate Year', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023])
@@ -112,9 +112,9 @@ class query4Form(FlaskForm):
     submit = SubmitField('Submit')
 
 class query5Form(FlaskForm):
-    fromDateYear = SelectField(u'From Month', choices=[2020, 2021, 2022])
+    fromDateYear = SelectField(u'From Year', choices=[2020, 2021, 2022])
     # toDate = SelectField(u'To', choices=[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015])
-    toDateYear = SelectField(u'From Month', choices=[2020, 2021, 2022])
+    toDateYear = SelectField(u'To Year', choices=[2020, 2021, 2022])
 
     fromDateMonth = SelectField(u'From Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
     toDateMonth = SelectField(u'To Month', choices=[1,2,3,4,5,6,7,8,9,10,11,12])
@@ -139,7 +139,6 @@ plot.add_layout(Legend(), 'right')
 
 year1 = 2002
 year2 = 2005
-
 
 @app.route('/')
 def index():
@@ -293,7 +292,7 @@ def plotGraph(): # For putting things into the bokth thingy
         plot.line(x,y2)
         plot.xaxis[0].axis_label = 'Years'
         plot.yaxis[0].axis_label = 'Crime Rates'
-    
+
     elif(currentQuery == 2):
         fromYear = session['query2FromDateYear']
         fromMonth = session['query2FromDateMonth']
@@ -419,6 +418,18 @@ def plotGraph(): # For putting things into the bokth thingy
         x = []
         y = []
 
+        sqlDistrict = """With dist (comm, cnum) AS
+            (SELECT "C.NGUYEN2".ChicagoCrimeCase.community AS comm, COUNT("C.NGUYEN2".ChicagoCrimeCase.caseNumber) AS cnum
+            FROM "C.NGUYEN2".ChicagoCrimeCase
+            WHERE "C.NGUYEN2".ChicagoCrimeCase.year = """ + str(midYear) + """ AND "C.NGUYEN2".ChicagoCrimeCase.community IS NOT NULL
+            GROUP BY "C.NGUYEN2".ChicagoCrimeCase.community)
+            SELECT comm
+            FROM dist
+            WHERE cnum = (SELECT MAX(cnum) FROM dist)
+            GROUP by comm"""
+        for row in cursor.execute(sqlDistrict):
+            print("communityNum: " + str(row[0]))
+
         sqlCommand = """SELECT cp.year AS year, ROUND(cp.cnum*100000/BQUINTERO.CHICAGOPOP.pop,7) AS rate_C
             FROM
             (SELECT "C.NGUYEN2".ChicagoCrimeCase.year AS year, COUNT("C.NGUYEN2".ChicagoCrimeCase.caseNumber) AS cnum
@@ -435,7 +446,6 @@ def plotGraph(): # For putting things into the bokth thingy
             WHERE "C.NGUYEN2".ChicagoCrimeCase.year >= """ + str(fromYear) + """ AND "C.NGUYEN2".ChicagoCrimeCase.year <= """ + str(toYear) + """
             GROUP BY "C.NGUYEN2".ChicagoCrimeCase.year) cp JOIN BQUINTERO.CHICAGOPOP ON BQUINTERO.CHICAGOPOP.year = cp.year
             ORDER BY cp.year"""
-
         for row in cursor.execute(sqlCommand):
             #specialString += str(row) + ", "
             list.append([row[0],row[1]])
@@ -552,62 +562,69 @@ def plotGraph(): # For putting things into the bokth thingy
         for i in range(fromYear, toYear + 1):
             year.append(i)
 
-        for row in cursor.execute(sqlCommand): 
+        for row in cursor.execute(sqlCommand):
             #specialString += str(row) + ", "
             list.append([row[0],row[1],row[2],row[3]])
             if row[0] == 8:
                 # year.append(row[1])
                 district8.append(row[2])
                 distAdv.append(row[3])
-                plot.circle([row[1]], [row[3]], color = "red")
+                plot.circle([row[1]], [row[2]], color = "darkviolet", legend_label="Crime Rate in District " +str(row[0]))
             elif row[0] == 9:
                 # year.append(row[1])
                 district9.append(row[2])
+                plot.circle([row[1]], [row[2]], color = "yellow", legend_label="Crime Rate in District " + str(row[0]))
             elif row[0] == 10:
                 # year.append(row[1])
                 district10.append(row[2])
+                plot.circle([row[1]], [row[2]], color = "green", legend_label="Crime Rate in District " + str(row[0]))
             elif row[0] == 12:
                 # year.append(row[1])
                 district12.append(row[2])
+                plot.circle([row[1]], [row[2]], color = "black", legend_label="Crime Rate in District " + str(row[0]))
             elif row[0] == 14:
                 # year.append(row[1])
                 district14.append(row[2])
-            elif row[0] == 16: 
+                plot.circle([row[1]], [row[2]], color = "purple", legend_label="Crime Rate in District " +str(row[0]))
+            elif row[0] == 16:
                 # year.append(row[1])
                 district16.append(row[2])
+                plot.circle([row[1]], [row[2]], color = "goldenrod", legend_label="Crime Rate in District " +str(row[0]))
             elif row[0] == 17:
                 # year.append(row[1])
                 district17.append(row[2])
+                plot.circle([row[1]], [row[2]], color = "blue", legend_label="Crime Rate in District " +str(row[0]))
             elif row[0] == 19:
                 # year.append(row[1])
                 district19.append(row[2])
+                plot.circle([row[1]], [row[2]], color = "maroon", legend_label="Crime Rate in District " +str(row[0]))
             elif row[0] == 20:
                 # year.append(row[1])
                 district20.append(row[2])
+                plot.circle([row[1]], [row[2]], color = "deeppink", legend_label="Crime Rate in District " +str(row[0]))
             elif row[0] == 24:
                 # year.append(row[1])
                 district24.append(row[2])
+                plot.circle([row[1]], [row[2]], color = "skyblue", legend_label="Crime Rate in District " +str(row[0]))
             elif row[0] == 25:
                 # year.append(row[1])
                 district25.append(row[2])
-
-            # print(row[0])
-            plot.circle([row[1]], [row[2]], color = "skyblue", legend_label="Crime Rate in District " + str(row[0]))
+                plot.circle([row[1]], [row[2]], color = "mediumspringgreen", legend_label="Crime Rate in District " +str(row[0]))
         print("Hi there")
         print(str(len(year)) + " " + str(len(district8)))
-        plot.line(year, district8)
-        plot.line(year, district9)
-        plot.line(year, district10)
-        plot.line(year, district12)
-        plot.line(year, district14)
-        plot.line(year, district16)
-        plot.line(year, district17)
-        plot.line(year, district19)
-        plot.line(year, district20)
-        plot.line(year, district24)
-        plot.line(year, district25)
+        plot.line(year, district8, line_color = "darkviolet")
+        plot.line(year, district9, line_color = "yellow")
+        plot.line(year, district10, line_color = "green")
+        plot.line(year, district12, line_color = "black")
+        plot.line(year, district14, line_color = "purple")
+        plot.line(year, district16, line_color = "goldenrod")
+        plot.line(year, district17, line_color = "blue")
+        plot.line(year, district19, line_color = "maroon")
+        plot.line(year, district20, line_color = "deeppink")
+        plot.line(year, district24, line_color = "skyblue")
+        plot.line(year, district25, line_color = "mediumspringgreen")
 
-        plot.line(year, distAdv, line_color = "red", legend_label= "Average Crime Rate") #Working on this
+        plot.line(year, distAdv, line_color = "red", line_width = 3, legend_label="Average Crime Rate") #Working on this
 
     #return specialString
     return list
