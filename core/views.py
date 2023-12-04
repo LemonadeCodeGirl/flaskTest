@@ -130,11 +130,6 @@ year2 = 2005
 
 @app.route('/')
 def index():
-    return 'Hello Ace123'
-
-
-@app.route('/home')
-def about():
     return render_template('index.html', headline="Hello World!")
 
 # querySelector
@@ -288,13 +283,13 @@ def plotGraph(): # For putting things into the bokth thingy
         plot.xaxis[0].axis_label = 'Years'
         plot.yaxis[0].axis_label = 'Crime Rates'
     elif(currentQuery == 2):
-        year1Month = session['query2FromDateMonth']
-        year1Year = session['query2FromDateYear']
-        year2Month = session['query2ToDateMonth']
-        year2Year = session['query2ToDateYear']
+        fromMonth = session['query2FromDateMonth']
+        fromYear = session['query2FromDateYear']
+        toMonth = session['query2ToDateMonth']
+        toYear = session['query2ToDateYear']
         crimeType = session['query2CrimeType']
 
-        print(str(year2Year) + " year2Year")
+        # print(str(year2Year) + " year2Year")
 
         sqlCommand = """SELECT hd.year, hd.month, hd.homicide_death_count AS homicide_death_count, cd.covid_death_count AS covid_death_count 
             FROM
@@ -306,20 +301,26 @@ def plotGraph(): # For putting things into the bokth thingy
             (SELECT year AS year, month AS month, COUNT(caseCount) AS covid_death_count
             FROM BQUINTERO.ChicagoCOVIDReport
             GROUP BY year, month) cd ON hd.year = cd.year AND hd.month = cd.month
-            WHERE hd.year >= """ + str(year1Year) + """ AND hd.year <= """ + str(year2Year) + """ AND ((hd.month >= 7 AND hd.month <= 12) OR (hd.month >= 1 AND hd.month <= 2)) 
+            WHERE hd.year < """ + str(toYear) + """ AND hd.year > """ + str(fromYear) + """ OR ((hd.year = """ + str(toYear) +""" AND hd.month < """ + str(toMonth) + """) OR (hd.year = """ + str(fromYear) + """ AND hd.month > """ + str(fromMonth) + """))
             ORDER BY hd.year, hd.month
 
         """
 
         # plot.clear() #Clear the plot???
 
+        x = []
+        y1 = []
+        y2 = []
+
         for row in cursor.execute(sqlCommand):
             #specialString += str(row) + ", "
             thing = sqlCommand[2]
             # print(row[0])
-            list.append([row[0],row[1],row[2],row[3],row[4]])
+            
+            list.append([row[0],row[1],row[2],row[3]])
             plot.circle([row[0] + row[1] / float(12)], [row[2]], color = "skyblue", legend_label="Homiside Rate")
             plot.circle([row[0] + row[1] / float(12)], [row[3]], color = "red", legend_label="Covid Death Rate")
+
     elif(currentQuery == 3):
         # session['query3FromMonth'] = form.fromDateMonth.data
         # session['query3FromYear'] = form.fromDateYear.data

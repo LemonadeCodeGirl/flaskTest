@@ -11,6 +11,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/node/16.13.2/node.min.js"></script>
 <body>
     <img src="{{ url_for('static', filename='/images/homePageImage.jpg') }}" width="60%" height="40%">
+
+    <a href="querySelector">
+        <button id="backButton"> To Query Selector </button>
+    </a>    
+
+
     <h1>Results for Query {{number}}</h1>
     
     <p>{{thing}}</p>
@@ -26,30 +32,28 @@
     </div>
 
     <!-- {{ div }} -->
-
-    <table border="1">
-        <thead>
-            <tr>
-                {% for i in range(results[0]|length) %}
-                    <th>Column {{i}}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for result in results %}
+ 
+    <div id="scrollable">
+        <table border="1">
+            <thead>
                 <tr>
-                    {% for field in result %}
-                        <td>{{field}}</td>
+                    {% for i in range(results[0]|length) %}
+                        <th>Column {{i}}</th>
                     {% endfor %}
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-        
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        {% for field in result %}
+                            <td>{{field}}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    <a href="querySelector">
-        <button> To Query Selector </button>
-    </a>    
+    </div>
 
 </body>
 </html>
