@@ -2,70 +2,70 @@
 <html>
     <title>CIA Home Page</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/queryPage.css') }}">
 <body class="text-green-600">
-    <h1 id="queryTitle">Select Your Query</h1>
+    <div>
+        <img src="{{ url_for('static', filename='/images/homePageImage.jpg') }}" width="60%" height="40%">
+    </div>
+    
+    <h1 is="queryTitle">Avalible Queries: </h1>
+    <!-- <h1 id="queryTitle">Avalible Queries: </h1>
     
     <a href="/">
-        <button> Back </button>
-    </a>
+        <button> Back to Home</button>
+    </a> -->
 
     <div id="allQueries">
 
-        <div>
-            <img src="">
-            <h3>Query 1:</h3>
-            
-            <p>Returns crime rate in Chicag, Crime rate in US, and year for which the computation was performed. </p>
+        <div id="firstRow">
+            <div>
+                <h3>Query 1:</h3>
+                
+                <p>Returns crime rate in Chicag, Crime rate in US, and year for which the computation was performed. </p>
 
-            <a href="query/query1">
-                <button>Select Query 1</button>
-            </a>
+                <a href="query/query1">
+                    <button>Select Query 1</button>
+                </a>
+            </div>
+
+            <div>
+                <!-- <img src=""> -->
+                <h3>Query 2</h3>
+                <p>Determine if rain is more likely to decrease crime compared to other weather conditions over a specified period of time.</p>
+                <a href="query/query2">
+                    <button>Select Query 2</button>
+                </a>
+            </div>
+            <div>
+                <!-- <img src=""> -->
+                <h3>Query 3</h3>
+                <p>Unemployment Rates' Impact on Crime</p>
+                <a href="query/query3">
+                    <button>Select Query 3</button>
+                </a>
+            </div>
         </div>
 
-        <div>
-            <img src="">
-            <h3>Query 2</h3>
-            <p>information here</p>
-            <a href="query/query2">
-                <button>Select Query 2</button>
-            </a>
-        </div>
+        <div id="secondRow">
 
-        <div>
-            <img src="">
-            <h3>Query 3</h3>
-            <p>Unemployment Rates' Impact on Crime</p>
-            <a href="query/query3">
-                <button>Select Query 3</button>
-            </a>
-        </div>
+            <div>
+                <!-- <img src=""> -->
+                <h3>Query 4</h3>
+                <p>information here</p>
+                <a href="query/query4">
+                    <button>Select Query 4</button>
+                </a>
+            </div>
 
-        <div>
-            <img src="">
-            <h3>Query 4</h3>
-            <p>information here</p>
-            <a href="query/query4">
-                <button>Select Query 4</button>
-            </a>
-        </div>
+            <div>
+                <!-- <img src=""> -->
+                <h3>Query 5</h3>
+                <p>information here</p>
+                <a href="query/query5">
+                    <button>Select Query 5</button>
+                </a>
+            </div>
 
-        <div>
-            <img src="">
-            <h3>Query 5</h3>
-            <p>information here</p>
-            <a href="query/query5">
-                <button>Select Query 5</button>
-            </a>
-        </div>
-
-        <div>
-            <img src="">
-            <h3>Query 6</h3>
-            <p>information here</p>
-            <a href="query/query6">
-                <button>Select Query 6</button>
-            </a>
         </div>
 
     </div>
