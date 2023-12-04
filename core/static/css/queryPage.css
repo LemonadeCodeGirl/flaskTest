@@ -27,8 +27,34 @@ h1{
 
 #secondRow{
     columns: 2;
+    margin-top: 30px;
 }
 
+.queryCards{
+    /* margin-top: 0px; */
+
+    background: rgb(0,0,0, 0.6);
+    margin: 25px;
+    padding: 30px;
+
+    text-align: left;
+}
+
+#query1Card{
+    margin-top: 0;
+}
+
+#query4Card{
+    margin-top: 0;
+}
+
+.queryCards h3{
+    font-size: xx-large;
+}
+
+.queryCards p{
+    font-size: large;
+}
 
 button{
     align-items: center;
