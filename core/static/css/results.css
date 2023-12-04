@@ -6,6 +6,8 @@ body{
     background-repeat: repeat-x; */
     background-repeat: repeat-y;
     background-repeat: repeat-x;
+
+    background-color: black;
 }
 
 img {
