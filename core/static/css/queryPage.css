@@ -61,6 +61,7 @@ button{
 
 #backButton{
     position: absolute;
+    box-shadow: none;
     left: 20px;
     font-size: 14px;
     color: white;

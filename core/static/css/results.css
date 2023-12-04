@@ -15,7 +15,8 @@ img {
 
 h1{
     font-size: 6em;
-}.graphDisplay{
+}
+.graphDisplay{
     display: flex;  
     align-items: center;    
     justify-content: center;
